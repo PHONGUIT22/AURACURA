@@ -30,3 +30,47 @@ export interface SkinMetrics {
   undertone: SkinToneUndertone;
   barrierStatus: SkinBarrierStatus;
 }
+
+export interface ApparelVTOItem {
+  id: string;
+  name: string;
+  brand: string;
+  category: ApparelCategory;
+  colorHex: string;
+  colorName: string;
+  fabricComposition: string[];
+  chromaticHarmonyScore: number;
+  priceUsd: number;
+  productUrl: string;
+  tryonImageUrl: string;
+}
+
+export type SkincarePhase = 'morning' | 'evening';
+export type SkincareStepType = 'cleanse' | 'treat' | 'barrier_repair' | 'protect';
+
+export interface SkincareStep {
+  stepNumber: number;
+  phase: SkincarePhase;
+  stepType: SkincareStepType;
+  productName: string;
+  brand: string;
+  keyActives: string[];
+  comedogenicRating: number;
+  clinicalRationale: string;
+  priceUsd: number;
+}
+
+export type SafetyCheckId = 'comedogenic' | 'active_clash' | 'barrier_safety' | 'fabric_friction';
+export type SafetyCheckStatus = 'pass' | 'warn' | 'fail';
+
+export interface SafetyCheck {
+  id: SafetyCheckId;
+  status: SafetyCheckStatus;
+  detail: string;
+}
+
+export interface SafetyAuditResult {
+  isSafe: boolean;
+  checks: SafetyCheck[];
+  summary: string;
+}
