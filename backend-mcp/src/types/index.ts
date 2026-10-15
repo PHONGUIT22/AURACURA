@@ -17,3 +17,16 @@ export interface ConsumerBeautyProfile {
   userSelfieUrl: string;
   preferredStyle: string;
 }
+
+export interface SkinMetrics {
+  acneScore: number;
+  rednessScore: number;
+  moistureScore: number;
+  poreScore: number;
+  wrinkleScore: number;
+  darkCircleScore: number;
+  skinAge: number;
+  chronologicalAge: number;
+  undertone: SkinToneUndertone;
+  barrierStatus: SkinBarrierStatus;
+}
