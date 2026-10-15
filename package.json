@@ -1,0 +1,36 @@
+{
+  "name": "curavip-agent",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Autonomous Cultural Intelligence & VIP Relationship Concierge powered by Qloo and Model Context Protocol",
+  "workspaces": [
+    "frontend",
+    "backend-mcp"
+  ],
+  "scripts": {
+    "dev": "concurrently -n mcp,web -c yellow,white \"npm run dev --workspace=backend-mcp\" \"npm run dev --workspace=frontend\"",
+    "dev:backend": "npm run dev --workspace=backend-mcp",
+    "dev:frontend": "npm run dev --workspace=frontend",
+    "build": "npm run build --workspace=backend-mcp && npm run build --workspace=frontend",
+    "start": "concurrently -n mcp,web -c yellow,white \"npm run start --workspace=backend-mcp\" \"npm run start --workspace=frontend\"",
+    "test": "npm run test --workspace=backend-mcp",
+    "test:bedrock": "npm run test:bedrock --workspace=backend-mcp"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  },
+  "keywords": [
+    "qloo",
+    "taste-graph",
+    "mcp",
+    "model-context-protocol",
+    "agentic",
+    "bedrock",
+    "claude",
+    "concierge",
+    "cultural-intelligence"
+  ],
+  "author": "PHONGUIT22",
+  "license": "MIT",
+  "type": "module"
+}
