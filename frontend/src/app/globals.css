@@ -1,0 +1,102 @@
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@300;400;500;600;700&family=Google+Sans+Text:wght@400;500;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #070709;
+  --foreground: #F3F4F6;
+}
+
+body {
+  background: #070709;
+  color: #F3F4F6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100dvh;
+  font-family: 'Google Sans', 'Google Sans Text', system-ui, sans-serif;
+}
+
+/* Dark Luxury Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #070709;
+  border-left: 1px solid #161820;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #222530;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #10B981;
+}
+
+/* Dark Luxury AuraCura Design Utilities */
+@layer components {
+  .luxury-card {
+    background: #0D0E12;
+    border: 1px solid #222530;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.6), 0 0 1px 1px rgba(255, 255, 255, 0.04);
+  }
+
+  .luxury-card-interactive {
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .luxury-card-interactive:hover {
+    border-color: #10B981;
+    background: #111319;
+    box-shadow: 0 8px 30px -4px rgba(16, 185, 129, 0.15);
+  }
+
+  .luxury-card-selected {
+    border-left: 3px solid #10B981 !important;
+    border-color: #10B981 !important;
+    background: #161820 !important;
+  }
+
+  .glass-panel {
+    background: rgba(13, 14, 18, 0.85);
+    backdrop-filter: blur(16px);
+    border: 1px solid #222530;
+    border-radius: 16px;
+  }
+
+  .gold-shimmer-btn {
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    color: #070709;
+    font-weight: 600;
+    border-radius: 10px;
+    border: 1px solid #34D399;
+    transition: all 0.2s ease;
+  }
+
+  .gold-shimmer-btn:hover {
+    background: linear-gradient(135deg, #34D399 0%, #10B981 100%);
+    box-shadow: 0 0 20px -3px rgba(16, 185, 129, 0.5);
+    transform: translateY(-1px);
+  }
+
+  .champagne-btn {
+    background: linear-gradient(135deg, #D4AF37 0%, #AA8C2C 100%);
+    color: #070709;
+    font-weight: 600;
+    border-radius: 10px;
+    border: 1px solid #FDE68A;
+    transition: all 0.2s ease;
+  }
+
+  .champagne-btn:hover {
+    background: linear-gradient(135deg, #FDE68A 0%, #D4AF37 100%);
+    box-shadow: 0 0 20px -3px rgba(212, 175, 55, 0.45);
+    transform: translateY(-1px);
+  }
+}
