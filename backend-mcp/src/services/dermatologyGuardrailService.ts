@@ -23,4 +23,18 @@ export class DermatologyGuardrailService {
     return { id: 'comedogenic', status: 'pass', detail: 'Formulation adheres to non-comedogenic criteria.' };
   }
 }
+  public auditActiveClashes(profile: any, skinMetrics: SkinMetrics, regimen: SkincareStep[]): SafetyCheck {
+    if (skinMetrics.barrierStatus === 'severely_damaged') {
+      const harsh = regimen.find(s => s.keyActives.some(a => /retinol|glycolic|alcohol denat/i.test(a)));
+      if (harsh) {
+        return {
+          id: 'active_clash',
+          status: 'fail',
+          detail: `Contraindicated harsh actives: Contact Dermatitis hazard under compromised stratum corneum.`,
+        };
+      }
+    }
+    return { id: 'active_clash', status: 'pass', detail: 'Zero contraindicated active clashes detected.' };
+  }
+}
 export const dermatologyGuardrailService = new DermatologyGuardrailService();
