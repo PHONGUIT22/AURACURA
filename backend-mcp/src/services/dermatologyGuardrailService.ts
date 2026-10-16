@@ -37,4 +37,17 @@ export class DermatologyGuardrailService {
     return { id: 'active_clash', status: 'pass', detail: 'Zero contraindicated active clashes detected.' };
   }
 }
+  public auditFabricFriction(skinMetrics: SkinMetrics, apparel: any): SafetyCheck {
+    const isErythemaActive = skinMetrics.rednessScore >= 60;
+    const isRough = apparel.fabricComposition.some((f: string) => /rough wool|coarse|polyester/i.test(f));
+    if (isErythemaActive && isRough) {
+      return {
+        id: 'fabric_friction',
+        status: 'fail',
+        detail: 'Mechanical Friction Hazard: Abrasive textiles exacerbate acute erythema micro-inflammation.',
+      };
+    }
+    return { id: 'fabric_friction', status: 'pass', detail: 'Tactile micro-friction certified safe.' };
+  }
+}
 export const dermatologyGuardrailService = new DermatologyGuardrailService();
