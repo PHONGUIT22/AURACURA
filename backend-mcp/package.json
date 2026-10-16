@@ -10,6 +10,7 @@
     "start": "node dist/server.js",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:youcam": "tsx scripts/test-youcam-live.ts",
     "test:bedrock": "tsx scripts/test-bedrock.ts"
   },
   "keywords": [

@@ -69,11 +69,14 @@ export const envConfig = {
   get YOUCAM_API_KEY(): string {
     return process.env.YOUCAM_API_KEY?.trim() || '';
   },
+  get YOUCAM_SECRET_KEY(): string {
+    return process.env.YOUCAM_SECRET_KEY?.trim() || '';
+  },
   get YOUCAM_BASE_URL(): string {
     return (process.env.YOUCAM_BASE_URL?.trim() || 'https://yce-api-01.makeupar.com').replace(/\/+$/, '');
   },
   get YOUCAM_TIMEOUT_MS(): number {
-    return readNumber(process.env.YOUCAM_TIMEOUT_MS, 10000);
+    return readNumber(process.env.YOUCAM_TIMEOUT_MS, 15000);
   },
   get QLOO_API_URL(): string {
     return (process.env.QLOO_API_URL?.trim() || 'https://hackathon.api.qloo.com').replace(/\/+$/, '');
@@ -110,6 +113,7 @@ export const envConfig = {
 export const env = {
   port: envConfig.PORT,
   youcamApiKey: envConfig.YOUCAM_API_KEY,
+  youcamSecretKey: envConfig.YOUCAM_SECRET_KEY,
   youcamBaseUrl: envConfig.YOUCAM_BASE_URL,
   youcamTimeoutMs: envConfig.YOUCAM_TIMEOUT_MS,
   sqliteDbPath: envConfig.DB_PATH,

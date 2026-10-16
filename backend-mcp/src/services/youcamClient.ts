@@ -49,14 +49,32 @@ export interface YouCamRawVtoResponse {
 }
 
 export class YouCamClient {
-  private apiKey: string;
-  private baseUrl: string;
-  private timeoutMs: number;
+  private customApiKey?: string;
+  private customSecretKey?: string;
+  private customBaseUrl?: string;
+  private customTimeoutMs?: number;
 
-  constructor() {
-    this.apiKey = envConfig.YOUCAM_API_KEY;
-    this.baseUrl = envConfig.YOUCAM_BASE_URL.replace(/\/+$/, '');
-    this.timeoutMs = envConfig.YOUCAM_TIMEOUT_MS;
+  constructor(options?: { apiKey?: string; secretKey?: string; baseUrl?: string; timeoutMs?: number }) {
+    this.customApiKey = options?.apiKey;
+    this.customSecretKey = options?.secretKey;
+    this.customBaseUrl = options?.baseUrl;
+    this.customTimeoutMs = options?.timeoutMs;
+  }
+
+  private get apiKey(): string {
+    return this.customApiKey !== undefined ? this.customApiKey : envConfig.YOUCAM_API_KEY;
+  }
+
+  public get secretKey(): string {
+    return this.customSecretKey !== undefined ? this.customSecretKey : envConfig.YOUCAM_SECRET_KEY;
+  }
+
+  private get baseUrl(): string {
+    return (this.customBaseUrl || envConfig.YOUCAM_BASE_URL).replace(/\/+$/, '');
+  }
+
+  private get timeoutMs(): number {
+    return this.customTimeoutMs || envConfig.YOUCAM_TIMEOUT_MS;
   }
 
   /**
@@ -163,8 +181,10 @@ export class YouCamClient {
       youcamCacheRepo.cacheSkinAnalysis(imageUrl, metrics);
       return metrics;
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : String(err);
-      console.warn(`[YouCamClient] Live skin analysis failed (${msg}). Falling back to Clinical Skin Vault.`);
+      if (process.env.DEBUG_YOUCAM === 'true') {
+        const msg = err instanceof Error ? err.message : String(err);
+        console.warn(`[YouCamClient] Live skin analysis fallback engaged (${msg}).`);
+      }
       const fallback = getFallbackSkinMetrics(imageUrl);
       youcamCacheRepo.cacheSkinAnalysis(imageUrl, fallback);
       return fallback;
