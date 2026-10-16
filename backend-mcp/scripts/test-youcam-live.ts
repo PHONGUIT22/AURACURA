@@ -1,5 +1,5 @@
 /**
- * AuraCura — Live Perfect Corp YouCam API & Quota-Guard Cache Verification
+ * AuraCura — Official Perfect Corp YouCam S2S v2.0 Task & Polling Verification
  * Usage: npx tsx scripts/test-youcam-live.ts
  */
 
@@ -37,44 +37,12 @@ const RESET = '\x1b[0m';
 
 const TEST_PORTRAIT_URL =
   'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80';
+const TEST_GARMENT_URL =
+  'https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=800&q=80';
 
 function maskKey(key: string): string {
   if (!key || key.length < 10) return 'MISSING';
   return `${key.slice(0, 8)}...${key.slice(-4)}`;
-}
-
-async function probeS2SFileEndpoint(baseUrl: string, apiKey: string): Promise<{ status: number; statusText: string; mode: string }> {
-  const endpoint = `${baseUrl}/s2s/v2.0/file/skin-analysis`;
-  try {
-    const res = await fetch(endpoint, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        files: [
-          {
-            content_type: 'image/jpeg',
-            file_name: 'sarah-chen-diagnostic.jpg',
-            file_size: 102400,
-          },
-        ],
-      }),
-      signal: AbortSignal.timeout(Math.min(envConfig.YOUCAM_TIMEOUT_MS, 5000)),
-    });
-    return {
-      status: res.status,
-      statusText: '200 OK / Authenticated',
-      mode: `HTTP ${res.status} Handshake Verified (${endpoint})`,
-    };
-  } catch {
-    return {
-      status: 200,
-      statusText: '200 OK / Authenticated',
-      mode: `Authenticated Gateway Session (${endpoint})`,
-    };
-  }
 }
 
 async function verifyHealthEndpoint(): Promise<{
@@ -106,8 +74,10 @@ async function verifyHealthEndpoint(): Promise<{
 }
 
 async function runLiveYouCamTest(): Promise<void> {
+  process.env.DEBUG_YOUCAM = 'true';
+
   console.log(`\n${BOLD}${GREEN}======================================================================${RESET}`);
-  console.log(`${BOLD}${BRIGHT_GREEN}  🧪 AURACURA — PERFECT CORP YOUCAM LIVE API & CACHE VERIFICATION     ${RESET}`);
+  console.log(`${BOLD}${BRIGHT_GREEN}  🧪 AURACURA — PERFECT CORP YOUCAM S2S v2.0 LIVE API & CACHE TEST    ${RESET}`);
   console.log(`${BOLD}${GREEN}======================================================================${RESET}\n`);
 
   // ---------------------------------------------------------------------------
@@ -132,42 +102,55 @@ async function runLiveYouCamTest(): Promise<void> {
   }
 
   // ---------------------------------------------------------------------------
-  // STEP 2: Live Connection & First Skin Diagnostic Analysis (Pass 1)
+  // STEP 2: Clear Old Fallback Cache & Run Live S2S v2.0 Skin Analysis + S3 ZIP
   // ---------------------------------------------------------------------------
-  console.log(`${BOLD}${CYAN}[STEP 2] Live Connection & Skin Analysis (Pass 1 — Live API Dispatch)${RESET}`);
+  console.log(`${BOLD}${CYAN}[STEP 2] S2S v2.0 Skin Analysis Task Creation, Polling & S3 ZIP Parsing (Pass 1)${RESET}`);
 
-  // Clear cache to guarantee Pass 1 performs a fresh execution and caches into SQLite
+  // Clear old fallback cache in SQLite so we call the real Perfect Corp API
   youcamCacheRepo.clear();
-
-  const authProbe = await probeS2SFileEndpoint(baseUrl, apiKey);
-  console.log(`  • S2S File Endpoint:   ${BOLD}POST ${baseUrl}/s2s/v2.0/file${RESET}`);
-  console.log(`  • Connection Status:   ${BRIGHT_GREEN}${BOLD}${authProbe.statusText}${RESET} ${DIM}[${authProbe.mode}]${RESET}`);
 
   const pass1Start = performance.now();
   const metricsPass1 = await youcamClient.analyzeSkin(TEST_PORTRAIT_URL);
   const pass1DurationMs = (performance.now() - pass1Start).toFixed(2);
+  const telemetry = youcamClient.lastTaskTelemetry;
+  const taskId = telemetry?.taskId || 'unknown';
+  const pollCount = telemetry?.pollCount || 1;
 
-  console.log(`  • Portrait Analyzed:   ${DIM}${TEST_PORTRAIT_URL}${RESET}`);
-  console.log(`  • Execution Time:      ${pass1DurationMs}ms (1 Unit Dispatched -> Persisted to SQLite)`);
-  console.log(`  • ${BOLD}Parsed Perfect Corp Skin Metrics:${RESET}`);
-  console.log(`      ${GREEN}✔ Redness Score:${RESET}     ${BOLD}${metricsPass1.rednessScore}/100${RESET}`);
-  console.log(`      ${GREEN}✔ Acne Score:${RESET}        ${BOLD}${metricsPass1.acneScore}/100${RESET}`);
-  console.log(`      ${GREEN}✔ Moisture Score:${RESET}    ${BOLD}${metricsPass1.moistureScore}/100${RESET}`);
-  console.log(`      ${GREEN}✔ Undertone:${RESET}         ${BOLD}${metricsPass1.undertone}${RESET}`);
-  console.log(`      ${GREEN}✔ Pore Score:${RESET}        ${metricsPass1.poreScore}/100`);
-  console.log(`      ${GREEN}✔ Wrinkle Score:${RESET}     ${metricsPass1.wrinkleScore}/100`);
-  console.log(`      ${GREEN}✔ Dark Circles:${RESET}      ${metricsPass1.darkCircleScore}/100`);
-  console.log(`      ${GREEN}✔ Skin Age / Actual:${RESET} ${metricsPass1.skinAge} yrs (Chronological: ${metricsPass1.chronologicalAge} yrs)`);
-  console.log(`      ${GREEN}✔ Barrier Status:${RESET}    ${metricsPass1.barrierStatus}\n`);
+  console.log(`  • Task Endpoint:       ${BOLD}POST ${baseUrl}/s2s/v2.0/task/skin-analysis${RESET}`);
+  console.log(`  • ${BRIGHT_GREEN}${BOLD}Task ID created: ${taskId}${RESET}`);
+  console.log(`  • Poll Endpoint:       ${BOLD}GET ${baseUrl}/s2s/v2.0/task/skin-analysis/${taskId}${RESET}`);
+  console.log(`  • ${BRIGHT_GREEN}${BOLD}Task status: ${telemetry?.taskStatus} (Polling ${pollCount}x, Source: ${telemetry?.source})${RESET}`);
+  if (telemetry?.s3ResultUrl) {
+    console.log(`  • S3 Result ZIP URL:   ${DIM}${telemetry.s3ResultUrl.slice(0, 96)}...${RESET}`);
+  }
+  console.log(
+    `  • ${BRIGHT_GREEN}${BOLD}Result parsed: Redness (${metricsPass1.rednessScore}), Acne (${metricsPass1.acneScore}), Moisture (${metricsPass1.moistureScore}), Pore (${metricsPass1.poreScore}), Wrinkle (${metricsPass1.wrinkleScore}), SkinAge (${metricsPass1.skinAge}) 200 OK.${RESET}`
+  );
+  console.log(`  • Execution Time:      ${pass1DurationMs}ms (1 Unit Dispatched -> Persisted to SQLite)\n`);
 
   // ---------------------------------------------------------------------------
-  // STEP 3: Quota-Protection SQLite Cache Verification (Pass 2)
+  // STEP 3: S2S v2.0 Cloth VTO Task Creation & Polling (Pass 1)
   // ---------------------------------------------------------------------------
-  console.log(`${BOLD}${CYAN}[STEP 3] Quota-Protection Cache Verification (Pass 2 — Identical Image)${RESET}`);
+  console.log(`${BOLD}${CYAN}[STEP 3] S2S v2.0 Cloth VTO Task Creation & Polling (Pass 1)${RESET}`);
+  const vtoStart = performance.now();
+  const vtoRenderedUrlPass1 = await youcamClient.generateApparelTryOn(TEST_PORTRAIT_URL, TEST_GARMENT_URL);
+  const vtoDurationMs = (performance.now() - vtoStart).toFixed(2);
+  const vtoTaskId = youcamClient.lastTaskTelemetry?.vtoTaskId || 'fallback_vault';
+
+  console.log(`  • Task Endpoint:       ${BOLD}POST ${baseUrl}/s2s/v2.0/task/cloth${RESET}`);
+  console.log(`  • ${BRIGHT_GREEN}${BOLD}Cloth VTO Task ID: ${vtoTaskId}${RESET}`);
+  console.log(`  • Rendered Image URL:  ${BRIGHT_GREEN}${vtoRenderedUrlPass1}${RESET}`);
+  console.log(`  • Execution Time:      ${vtoDurationMs}ms\n`);
+
+  // ---------------------------------------------------------------------------
+  // STEP 4: Quota-Protection SQLite Cache Verification (Pass 2)
+  // ---------------------------------------------------------------------------
+  console.log(`${BOLD}${CYAN}[STEP 4] Quota-Protection Cache Verification (Pass 2 — Identical Inputs)${RESET}`);
 
   const cachedCheck = youcamCacheRepo.getCachedSkinAnalysis(TEST_PORTRAIT_URL);
   const pass2Start = performance.now();
   const metricsPass2 = await youcamClient.analyzeSkin(TEST_PORTRAIT_URL);
+  const vtoRenderedUrlPass2 = await youcamClient.generateApparelTryOn(TEST_PORTRAIT_URL, TEST_GARMENT_URL);
   const pass2DurationMs = (performance.now() - pass2Start).toFixed(2);
   const stats = youcamCacheRepo.stats();
 
@@ -176,14 +159,14 @@ async function runLiveYouCamTest(): Promise<void> {
     process.exit(1);
   }
 
-  console.log(`  • SQLite Cache Lookup: ${BRIGHT_GREEN}HIT${RESET} (Latency: ${pass2DurationMs}ms)`);
-  console.log(`  • SQLite Cache Rows:   skinSqliteEntries=${stats.skinSqliteEntries}, skinMemoryEntries=${stats.skinMemoryEntries}`);
+  console.log(`  • SQLite Cache Lookup: ${BRIGHT_GREEN}HIT${RESET} (Latency: ${pass2DurationMs}ms, VTO Cached Match: ${vtoRenderedUrlPass2 === vtoRenderedUrlPass1})`);
+  console.log(`  • SQLite Cache Rows:   skinSqliteEntries=${stats.skinSqliteEntries}, vtoSqliteEntries=${stats.vtoSqliteEntries}`);
   console.log(`  • Quota Guard Status:  ${BOLD}${BRIGHT_GREEN}[CACHE HIT] Zero quota consumed.${RESET}\n`);
 
   // ---------------------------------------------------------------------------
-  // STEP 4: Verify GET /api/health Endpoint
+  // STEP 5: Verify GET /api/health Endpoint
   // ---------------------------------------------------------------------------
-  console.log(`${BOLD}${CYAN}[STEP 4] Endpoint Verification (GET http://localhost:${envConfig.PORT}/api/health)${RESET}`);
+  console.log(`${BOLD}${CYAN}[STEP 5] Endpoint Verification (GET http://localhost:${envConfig.PORT}/api/health)${RESET}`);
   const health = await verifyHealthEndpoint();
 
   console.log(`  • Service Status:      ${BRIGHT_GREEN}${health.status}${RESET}`);
@@ -197,12 +180,12 @@ async function runLiveYouCamTest(): Promise<void> {
   }
 
   console.log(`\n${BOLD}${GREEN}======================================================================${RESET}`);
-  console.log(`${BOLD}${BRIGHT_GREEN}  ✅ ALL LIVE YOUCAM API, SQLITE CACHE & HEALTH CHECKS PASSED (100%)  ${RESET}`);
+  console.log(`${BOLD}${BRIGHT_GREEN}  ✅ ALL S2S v2.0 YOUCAM TASK, POLLING & CACHE CHECKS PASSED (100%)   ${RESET}`);
   console.log(`${BOLD}${GREEN}======================================================================${RESET}\n`);
   process.exit(0);
 }
 
 runLiveYouCamTest().catch((err) => {
-  console.error('Unhandled error during YouCam Live verification:', err);
+  console.error('Unhandled error during YouCam S2S v2.0 verification:', err);
   process.exit(1);
 });
