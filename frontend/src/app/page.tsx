@@ -129,8 +129,6 @@ export default function Home() {
           if (list.length > 0) {
             setProfiles(list);
             setSelectedProfile(list[0]);
-            // Automatically synthesize initial dossier for Sarah Chen
-            fetchDossierStream(list[0].id, 'auracura_grounded');
           }
         }
       } catch (err) {
@@ -138,18 +136,19 @@ export default function Home() {
       }
     }
     loadProfiles();
-  }, [fetchDossierStream, API_BASE_URL]);
+  }, [API_BASE_URL]);
 
   const handleSelectProfile = (profile: ConsumerBeautyProfile) => {
     soundService.playMechanicalClick();
     setSelectedProfile(profile);
-    fetchDossierStream(profile.id, executionMode);
+    setActiveDossier(null);
+    setActiveTrace([]);
   };
 
   const handleToggleMode = (newMode: AuraCuraExecutionMode) => {
     soundService.playToggleClick();
     setExecutionMode(newMode);
-    if (selectedProfile) {
+    if (selectedProfile && activeDossier) {
       fetchDossierStream(selectedProfile.id, newMode);
     }
   };
