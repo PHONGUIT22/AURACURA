@@ -5,6 +5,7 @@
 [![Runtime: Node 22](https://img.shields.io/badge/Node.js-22_LTS-339933?style=for-the-badge&logo=nodedotjs)](https://nodejs.org)
 [![Frontend: Next.js 15](https://img.shields.io/badge/Frontend-Next.js_15_App_Router-black?style=for-the-badge&logo=nextdotjs)](https://nextjs.org)
 [![Styling: Dark Luxury](https://img.shields.io/badge/Design-Dark_Luxury_Obsidian-10B981?style=for-the-badge)](https://tailwindcss.com)
+[![Demo Video](https://img.shields.io/badge/Demo_Video-YouTube_3--Min-FF0000?style=for-the-badge&logo=youtube)](https://youtu.be/LrcZqj3yAEE)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
 
 > *"Why standard eCommerce Virtual Try-On (VTO) fails consumers: The Biological Blindness problem."*  
@@ -25,6 +26,15 @@ Online apparel and luxury beauty suffer from an alarming **40%–75% return rate
 | **Material Science** | Ignored; synthetic polyester recommended | **Micro-friction coefficient audit** ($\mu \le 0.18$, 100% Mulberry Silk) |
 | **Skincare Regimen** | Dangerous clashes (Retinol + BHA on broken barrier) | **Dermatologist-certified** 5-step diurnal repair regimen |
 | **Predicted Return Rate**| **75% (High Risk)** | **< 4% (Clinically Certified)** |
+
+---
+
+## 🎬 3-Minute Video Demo & Walkthrough
+
+[![AuraCura Demo Video](https://img.youtube.com/vi/LrcZqj3yAEE/maxresdefault.jpg)](https://youtu.be/LrcZqj3yAEE)
+
+> 📺 **Watch Full 3-Minute Walkthrough**: [https://youtu.be/LrcZqj3yAEE](https://youtu.be/LrcZqj3yAEE)  
+> *Features live YouCam 14-metric skin diagnostics, apparel VTO with Before/After slider, deterministic dermatology guardrail auditing, and side-by-side ChatGPT benchmark.*
 
 ---
 
@@ -87,7 +97,7 @@ flowchart TD
         PDFExport["Client-Side Vector PDF Exporter"]
     end
 
-    subgraph Backend_MCP ["AuraCura Node.js 22 MCP Server (curavip-backend-mcp)"]
+    subgraph Backend_MCP ["AuraCura Node.js 22 MCP Server (auracura-backend-mcp)"]
         SSE_Endpoint["MCP SSE Endpoint (/sse)"]
         REST_Routes["REST Router (/api/profiles, /api/dossier/stream, /api/benchmark)"]
         Orchestrator["4-Phase ReAct Agent Orchestrator"]
@@ -327,8 +337,8 @@ The system is validated across 4 test layers:
    - **Total**: **27 passing tests (0 failures)**.
 
 2. **Full Workspace Build Verification**:
-   - `curavip-backend-mcp`: `tsc` compiled cleanly with 0 type errors.
-   - `curavip-frontend`: `next build` compiled cleanly with 5 static prerendered routes.
+   - `auracura-backend-mcp`: `tsc` compiled cleanly with 0 type errors.
+   - `auracura-frontend`: `next build` compiled cleanly with 5 static prerendered routes.
 
 ---
 
