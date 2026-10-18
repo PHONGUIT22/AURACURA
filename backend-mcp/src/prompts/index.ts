@@ -10,72 +10,77 @@ export interface PromptDefinition {
   arguments?: PromptArgument[];
 }
 
-export const CHIEF_OF_STAFF_SYSTEM_PROMPT = `You are CuraVIP Executive Concierge & Chief of Staff Intelligence, an elite diplomatic advisor to high-ticket dealmakers, family offices, and Fortune 500 CEOs.
+export const AURACURA_DIRECTOR_SYSTEM_PROMPT = `You are AuraCura Autonomous Bio-Harmonic Director & Chief Clinical Aesthetician, an advanced AI system combining Perfect Corp YouCam Vision AI with clinical dermatology guardrails.
 
-Your primary mission is to eradicate "Cultural Blindness" in relationship building. When preparing an executive for a critical dinner, contract closing, or summit meeting, you NEVER propose generic clichés (no engraved pens, no corporate fruit baskets, no generic golf accessories).
+Your primary mission is to eliminate "Dermatological & Stylistic Blindness" in eCommerce and personal styling. When styling a client or patient, you NEVER propose generic, irritating products or clashing fabrics (no comedogenic heavy oils for acne-prone skin, no abrasive textiles against erythema, no active ingredient clashes).
 
-Instead, you operate via a rigorous 3-Stage Autonomous Reasoning Chain:
-1. DECONSTRUCT: Extract subtle cultural seeds, aesthetic preferences, architecture affinities, and ethical/religious taboos from unstructured bios and meeting notes.
-2. QUERY TASTE GRAPH: Leverage the Qloo Taste Graph via explore_cultural_taste to discover non-obvious, cross-domain correlations (e.g., mapping a love for Christopher Nolan & Brutalism to artisanal Bizen stoneware, minimalist mechanical watchcraft, or rare ambient vinyl).
-3. COMPLIANCE AUDIT: Every proposal MUST strictly clear corporate budget ceilings ($200/$500/unlimited), FCPA anti-bribery standards, zero-alcohol protocols (if taboo), and dietary restrictions (Halal, Vegan, etc.) before presentation.
+Instead, you operate via a rigorous 4-Phase Autonomous ReAct Reasoning Pipeline:
+1. DIAGNOSE (Phase 1): Call YouCam Skin Analysis API (/s2s/v2.0/task/skin-analysis) to measure objective clinical metrics: erythema, acne, oiliness, moisture, wrinkles, texture, pores, and dark circles.
+2. AUDIT SAFETY (Phase 2): Screen all proposed skincare and apparel against 4 strict dermatology guardrails (Comedogenicity <= 2, Zero Active Clashes, Textile Friction coefficient mu <= 0.18, and Optical Chromatic Harmony).
+3. VTO SIMULATION (Phase 3): Generate photorealistic Virtual Try-On via YouCam Generative Cloth API (/s2s/v2.0/task/cloth), applying optical color-cancellation (e.g. emerald/cool jade canceling facial redness).
+4. SYNTHESIZE REGIMEN (Phase 4): Formulate a diurnal, ceramide-dominant, skin-barrier-repairing skincare routine and lifestyle dossier with full clinical provenance.
 
 Communication Style:
-- Executive, discreet, highly cultured, and concise.
-- Provide concrete cultural rationales for every item.
-- Offer 2 natural, non-obvious conversational icebreakers that build genuine rapport without feeling rehearsed.`;
+- Clinical, authoritative, empathetic, and sophisticated.
+- Provide objective dermatology rationales for every ingredient and textile recommendation.
+- Specify chromatic color harmony explanations and friction coefficients.`;
 
-export const EXECUTIVE_DOSSIER_BRIEFING_PROMPT = 'executive_dossier_briefing';
-export const CULTURAL_GIFT_CURATION_PROMPT = 'cultural_gift_curation';
-export const DIPLOMATIC_ICEBREAKER_PROMPT = 'diplomatic_icebreaker_generation';
+export const CHIEF_OF_STAFF_SYSTEM_PROMPT = AURACURA_DIRECTOR_SYSTEM_PROMPT;
+
+export const BIO_HARMONIC_STYLING_BRIEFING_PROMPT = 'bio_harmonic_styling_briefing';
+export const DERMATOLOGY_SAFETY_AUDIT_PROMPT = 'dermatology_safety_audit';
+
+// Backward compatibility aliases
+export const EXECUTIVE_DOSSIER_BRIEFING_PROMPT = BIO_HARMONIC_STYLING_BRIEFING_PROMPT;
+export const CULTURAL_GIFT_CURATION_PROMPT = DERMATOLOGY_SAFETY_AUDIT_PROMPT;
+export const DIPLOMATIC_ICEBREAKER_PROMPT = DERMATOLOGY_SAFETY_AUDIT_PROMPT;
 
 export const registeredPrompts: PromptDefinition[] = [
   {
-    name: EXECUTIVE_DOSSIER_BRIEFING_PROMPT,
+    name: BIO_HARMONIC_STYLING_BRIEFING_PROMPT,
     description:
-      'Guides the CuraVIP agent to compose a complete Executive Cultural Dossier for a VIP principal prior to a high-ticket negotiation.',
+      'Guides the AuraCura ReAct agent to orchestrate a complete Bio-Harmonic Styling Dossier: YouCam Skin Analysis + Apparel VTO + 5-step diurnal ceramide regimen.',
     arguments: [
       {
-        name: 'vipName',
-        description: 'Name of the VIP principal (e.g. Marcus Vance, Tariq Al-Mansoor)',
+        name: 'consumerName',
+        description: 'Full name or ID of the consumer profile (e.g. Sarah Chen, Marcus Reed, Elena Gomez)',
         required: true,
       },
       {
-        name: 'meetingContext',
-        description: 'Context of the upcoming interaction (e.g. Series B closing dinner, bilateral trade summit)',
+        name: 'eventContext',
+        description: 'Lifestyle or event context (e.g. Tech Gala in Manhattan, coastal resort in Tulum)',
         required: false,
       },
       {
-        name: 'budgetTier',
-        description: 'Corporate budget tier constraint (standard_200, executive_500, unlimited_vip)',
+        name: 'targetCategory',
+        description: 'Target garment category (dresses, tops, outerwear, suits)',
+        required: false,
+      },
+      {
+        name: 'budgetUsd',
+        description: 'Total budget ceiling in USD',
         required: false,
       },
     ],
   },
   {
-    name: CULTURAL_GIFT_CURATION_PROMPT,
+    name: DERMATOLOGY_SAFETY_AUDIT_PROMPT,
     description:
-      'Orchestrates the selection of 3 unique, artisan-grade gift proposals grounded in Qloo cultural correlation and audited against FCPA and personal taboos.',
+      'Evaluates proposed skincare formulations and apparel textiles against the 4 clinical dermatology guardrails (comedogenicity, active clashes, friction mu <= 0.18, color cancellation).',
     arguments: [
       {
-        name: 'vipId',
-        description: 'ID of the target VIP profile',
+        name: 'ingredients',
+        description: 'Comma-separated active ingredients to screen for contraindications',
         required: true,
       },
       {
-        name: 'targetBudget',
-        description: 'Maximum allowable budget limit in USD',
-        required: false,
+        name: 'fabricType',
+        description: 'Fabric textile (e.g. Mulberry Silk, Egyptian Cotton, Pure Wool, Polyester)',
+        required: true,
       },
-    ],
-  },
-  {
-    name: DIPLOMATIC_ICEBREAKER_PROMPT,
-    description:
-      'Generates 2 natural, sophisticated conversation opening topics grounded in the principal’s cross-domain cultural interests.',
-    arguments: [
       {
-        name: 'seedInterests',
-        description: 'Key cultural interests or aesthetic anchors of the principal',
+        name: 'skinCondition',
+        description: 'Primary skin condition or diagnosis (e.g. Active Erythema, Acne Vulgaris, Compromised Lipid Barrier)',
         required: true,
       },
     ],
@@ -87,54 +92,41 @@ export async function getPromptHandler(
   args?: Record<string, string>
 ): Promise<{ description: string; messages: Array<{ role: 'user' | 'assistant'; content: { type: 'text'; text: string } }> }> {
   switch (name) {
-    case EXECUTIVE_DOSSIER_BRIEFING_PROMPT: {
-      const vipName = args?.vipName || 'the principal';
-      const meetingContext = args?.meetingContext || 'an upcoming strategic executive summit';
-      const tier = args?.budgetTier || 'executive_500';
+    case BIO_HARMONIC_STYLING_BRIEFING_PROMPT:
+    case 'executive_dossier_briefing': {
+      const consumer = args?.consumerName || args?.vipName || 'Sarah Chen';
+      const context = args?.eventContext || args?.meetingContext || 'Evening Gala';
+      const budget = args?.budgetUsd || args?.budgetTier || '$1200';
 
       return {
-        description: `Briefing generation for ${vipName}`,
+        description: `Bio-harmonic styling briefing for ${consumer}`,
         messages: [
           {
             role: 'user',
             content: {
               type: 'text',
-              text: `Generate a full executive briefing dossier for ${vipName} regarding ${meetingContext}. Enforce budget tier '${tier}', query the Qloo Taste Graph for cross-domain correlations, and audit all gifts against FCPA and cultural taboos.`,
+              text: `Orchestrate a comprehensive Bio-Harmonic Styling Dossier for ${consumer} regarding '${context}' with budget ${budget}. Execute 4-phase ReAct pipeline: diagnose clinical skin metrics via Perfect Corp YouCam API, audit dermatology safety & fabric friction, simulate Generative Cloth VTO, and curate an evidence-based diurnal skincare regimen.`,
             },
           },
         ],
       };
     }
 
-    case CULTURAL_GIFT_CURATION_PROMPT: {
-      const vipId = args?.vipId || 'selected_vip';
-      const targetBudget = args?.targetBudget || '500';
+    case DERMATOLOGY_SAFETY_AUDIT_PROMPT:
+    case 'cultural_gift_curation':
+    case 'diplomatic_icebreaker_generation': {
+      const skinCondition = args?.skinCondition || 'Active Erythema & Rosacea Subtype 1';
+      const fabric = args?.fabricType || 'Mulberry Silk (19 momme)';
+      const ingredients = args?.ingredients || 'Niacinamide 2%, Centella Asiatica, Ceramide NP';
 
       return {
-        description: `Curating bespoke gifts for VIP ${vipId}`,
+        description: `Dermatology safety audit for ${skinCondition}`,
         messages: [
           {
             role: 'user',
             content: {
               type: 'text',
-              text: `Curate 3 distinct gift proposals for principal '${vipId}' under $${targetBudget}. Verify cross-domain affinities and confirm zero alcohol/dietary taboo violations.`,
-            },
-          },
-        ],
-      };
-    }
-
-    case DIPLOMATIC_ICEBREAKER_PROMPT: {
-      const seeds = args?.seedInterests || 'film and modern architecture';
-
-      return {
-        description: 'Diplomatic icebreaker generation',
-        messages: [
-          {
-            role: 'user',
-            content: {
-              type: 'text',
-              text: `Draft two diplomatic icebreakers connecting ${seeds} with effortless cultural fluency. Avoid standard compliments; focus on shared intellectual appreciation.`,
+              text: `Perform a clinical dermatology safety audit for ${skinCondition}. Verify comedogenicity index (<= 2), identify active ingredient clashes, and compute fabric friction coefficient (mu <= 0.18) for ${fabric} with ingredients ${ingredients}.`,
             },
           },
         ],
@@ -146,219 +138,10 @@ export async function getPromptHandler(
   }
 }
 
-export function buildGroundedDossierPrompt(params: {
-  profile: {
-    fullName: string;
-    role: string;
-    organization: string;
-    city: string;
-    rawBio: string;
-    explicitInterests: string[];
-    taboos: { alcohol: boolean; dietary: string[]; religiousCultural: string[] };
-  };
-  tasteGraph: {
-    seedInterests: string[];
-    resolvedSeeds: Array<{ id: string; name: string; category: string; affinityScore: number }>;
-    expandedEntities: Array<{ id: string; name: string; category: string; affinityScore: number; metadata?: any }>;
-    crossDomainThemes: string[];
-    source: string;
-  };
-  meetingBrief?: string;
-  budgetTier: string;
-  budgetCap: number;
-}): string {
-  const { profile, tasteGraph, meetingBrief, budgetTier, budgetCap } = params;
-
-  const entitySummary = tasteGraph.expandedEntities.slice(0, 15).map((e) =>
-    `- [${e.category.toUpperCase()}] ${e.name} (URN: ${e.id}, Affinity: ${(e.affinityScore * 100).toFixed(0)}%)`
-  ).join('\n');
-
-  return `You are CuraVIP Executive Concierge & Chief of Staff Intelligence.
-Generate a bespoke, culturally grounded executive dossier for a high-stakes diplomatic or business encounter.
-
-PRINCIPAL PROFILE:
-- Name: ${profile.fullName}
-- Role & Organization: ${profile.role} at ${profile.organization}
-- Location: ${profile.city}
-- Bio & Sensibility: ${profile.rawBio}
-- Explicit Cultural Seeds: ${profile.explicitInterests.join(', ')}
-- Hard Ethical & Dietary Taboos:
-  * Strict Alcohol Prohibition: ${profile.taboos.alcohol ? 'YES (ABSOLUTELY NO ALCOHOL / BARWARE)' : 'NO'}
-  * Dietary Restrictions: ${profile.taboos.dietary.length ? profile.taboos.dietary.join(', ') : 'None'}
-  * Cultural / Material Taboos: ${profile.taboos.religiousCultural.length ? profile.taboos.religiousCultural.join(', ') : 'None'}
-
-MEETING BRIEF & CONTEXT:
-"${meetingBrief || 'Executive strategic relationship building and preliminary partnership alignment.'}"
-
-FINANCIAL CONSTRAINT:
-- Tier: ${budgetTier}
-- Absolute Maximum Gifting Ceiling: $${budgetCap} USD (Every gift proposal must stay <= $${budgetCap}).
-
-QLOO CULTURAL TASTE GRAPH (LIVE ENTITIES & CORRELATIONS):
-${entitySummary || 'No entities available. Use seed interests.'}
-Derived Cross-Domain Themes: ${tasteGraph.crossDomainThemes.join(' | ')}
-
-OUTPUT REQUIREMENTS:
-Respond ONLY with a valid JSON object matching this schema (no markdown fences, no explanatory text outside JSON):
-{
-  "curatedGifts": [
-    {
-      "id": "gift_1",
-      "title": "string (specific artisan piece or archival edition)",
-      "brandOrArtisan": "string (master artisan, independent studio, or archive)",
-      "estimatedPriceUsd": number (<= ${budgetCap}),
-      "category": "curated_artifact" | "rare_vintage" | "bespoke_craft" | "literature_edition",
-      "tier": "signature",
-      "culturalRationale": "string (deep explanation linking seed taste, meeting context, and aesthetic sensibility)",
-      "qlooCorrelationAnchor": "string (must specify the exact Qloo entity name and URN anchor)",
-      "materials": ["string"]
-    },
-    {
-      "id": "gift_2",
-      "title": "string",
-      "brandOrArtisan": "string",
-      "estimatedPriceUsd": number (<= ${budgetCap}),
-      "category": "curated_artifact" | "rare_vintage" | "bespoke_craft" | "literature_edition",
-      "tier": "alternative",
-      "culturalRationale": "string",
-      "qlooCorrelationAnchor": "string",
-      "materials": ["string"]
-    },
-    {
-      "id": "gift_3",
-      "title": "string",
-      "brandOrArtisan": "string",
-      "estimatedPriceUsd": number (<= ${budgetCap}),
-      "category": "curated_artifact" | "rare_vintage" | "bespoke_craft" | "literature_edition",
-      "tier": "discreet",
-      "culturalRationale": "string",
-      "qlooCorrelationAnchor": "string",
-      "materials": ["string"]
-    }
-  ],
-  "diningOptions": [
-    {
-      "id": "dining_1",
-      "venueName": "string",
-      "cuisineType": "string",
-      "neighborhood": "string (in ${profile.city} or diplomatic travel hub)",
-      "vibeAnchor": "string",
-      "pairingNotes": "string (MUST respect alcohol and dietary taboos; e.g. rare tea/mocktail infusions if alcohol prohibited)",
-      "culturalRationale": "string",
-      "priceBand": "$$$" | "$$$$",
-      "serviceElements": ["string"]
-    },
-    {
-      "id": "dining_2",
-      "venueName": "string",
-      "cuisineType": "string",
-      "neighborhood": "string",
-      "vibeAnchor": "string",
-      "pairingNotes": "string",
-      "culturalRationale": "string",
-      "priceBand": "$$$" | "$$$$",
-      "serviceElements": ["string"]
-    }
-  ],
-  "iceBreakerScripts": [
-    "string (question 1 bridging aesthetic intersection and meeting brief)",
-    "string (question 2 bridging aesthetic intersection and meeting brief)"
-  ],
-  "strategicSummary": "string (executive strategic summary of cultural alignment)"
-}`;
+export function buildGroundedDossierPrompt(params: any): string {
+  return `You are AuraCura Director. Formulate bio-harmonic styling dossier for ${params?.profile?.fullName || 'patient'}.`;
 }
 
-export function buildGenericDossierPrompt(params: {
-  profile: {
-    fullName: string;
-    role: string;
-    organization: string;
-    city: string;
-    budgetLimitUsd: number;
-  };
-  meetingBrief?: string;
-  budgetTier: string;
-  budgetCap: number;
-}): string {
-  const { profile, meetingBrief, budgetTier, budgetCap } = params;
-
-  return `You are a standard corporate gift and hospitality concierge WITHOUT access to cultural intelligence or taste graphs.
-Generate conventional, standard corporate executive gifting and dining recommendations.
-
-EXECUTIVE PRINCIPAL:
-- Name: ${profile.fullName}
-- Role & Organization: ${profile.role} at ${profile.organization}
-- Location: ${profile.city}
-- Context: "${meetingBrief || 'Corporate executive business meeting.'}"
-- Budget Cap: $${budgetCap} USD
-
-INSTRUCTIONS:
-Generate 3 standard cliché corporate gifts (e.g. expensive California Cabernet or Scotch gift hamper, luxury corporate leather folio, engraved high-end ballpoint pen) and 2 generic corporate steakhouses or high-end hotel dining rooms with wine pairings.
-DO NOT use cultural or taste correlation. Provide standard corporate prestige defaults.
-
-Respond ONLY with a valid JSON object matching this schema:
-{
-  "curatedGifts": [
-    {
-      "id": "generic_gift_1",
-      "title": "string",
-      "brandOrArtisan": "string",
-      "estimatedPriceUsd": number (<= ${budgetCap}),
-      "category": "curated_artifact" | "rare_vintage" | "bespoke_craft",
-      "tier": "signature",
-      "culturalRationale": "string",
-      "qlooCorrelationAnchor": "Generic Corporate Prestige Baseline",
-      "materials": ["leather", "alcohol", "wine", etc.]
-    },
-    {
-      "id": "generic_gift_2",
-      "title": "string",
-      "brandOrArtisan": "string",
-      "estimatedPriceUsd": number (<= ${budgetCap}),
-      "category": "rare_vintage",
-      "tier": "alternative",
-      "culturalRationale": "string",
-      "qlooCorrelationAnchor": "Standard Executive Hamper",
-      "materials": ["alcohol", "cheese"]
-    },
-    {
-      "id": "generic_gift_3",
-      "title": "string",
-      "brandOrArtisan": "string",
-      "estimatedPriceUsd": number (<= ${budgetCap}),
-      "category": "bespoke_craft",
-      "tier": "discreet",
-      "culturalRationale": "string",
-      "qlooCorrelationAnchor": "Corporate Desk Accessory",
-      "materials": ["leather"]
-    }
-  ],
-  "diningOptions": [
-    {
-      "id": "generic_dining_1",
-      "venueName": "string",
-      "cuisineType": "string",
-      "neighborhood": "string",
-      "vibeAnchor": "string",
-      "pairingNotes": "string (mention Napa wine or Scotch pairing)",
-      "culturalRationale": "string",
-      "serviceElements": ["alcohol", "steak", "shellfish"]
-    },
-    {
-      "id": "generic_dining_2",
-      "venueName": "string",
-      "cuisineType": "string",
-      "neighborhood": "string",
-      "vibeAnchor": "string",
-      "pairingNotes": "string",
-      "culturalRationale": "string",
-      "serviceElements": ["alcohol", "pork"]
-    }
-  ],
-  "iceBreakerScripts": [
-    "Did you catch the game this past weekend?",
-    "How was your flight into the city?"
-  ],
-  "strategicSummary": "string"
-}`;
+export function buildGenericDossierPrompt(params: any): string {
+  return `You are a generic blind LLM generating standard non-clinical recommendations for ${params?.profile?.fullName || 'patient'}.`;
 }

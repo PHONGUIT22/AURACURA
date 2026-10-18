@@ -1,8 +1,8 @@
 {
-  "name": "curavip-backend-mcp",
+  "name": "auracura-backend-mcp",
   "version": "1.0.0",
   "private": true,
-  "description": "CuraVIP MCP server: Qloo Taste Graph grounding, compliance guardrails and AWS Bedrock Claude orchestration",
+  "description": "AuraCura MCP server: Perfect Corp YouCam API grounding, dermatology guardrails and ReAct agent orchestration",
   "main": "dist/server.js",
   "scripts": {
     "dev": "tsx watch src/server.ts",
@@ -15,7 +15,10 @@
   },
   "keywords": [
     "mcp",
-    "qloo",
+    "youcam",
+    "vto",
+    "skin-ai",
+    "dermatology",
     "bedrock"
   ],
   "author": "PHONGUIT22",

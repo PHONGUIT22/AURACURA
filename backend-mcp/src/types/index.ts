@@ -2,7 +2,7 @@
  * AuraCura Core Domain Schema & Type Definitions
  * System: Autonomous Bio-Harmonic eCommerce VTO & Skin-Safe Styling
  *
- * NOTE: This file is mirrored verbatim in frontend/src/types/index.ts - keep both 100% in sync.
+ * NOTE: This file is mirrored verbatim in frontend/src/types/index.ts and backend-mcp/src/types/index.ts - keep both 100% in sync.
  */
 
 // ============================================================================
@@ -42,7 +42,7 @@ export interface SkinMetrics {
   /** Detected skin undertone for chromatic color matching */
   undertone: SkinToneUndertone;
   /** Stratum corneum barrier integrity status */
-  barrierStatus: 'healthy' | 'compromised' | 'severely_damaged';
+  barrierStatus: SkinBarrierStatus;
 }
 
 // ============================================================================
@@ -69,7 +69,7 @@ export interface ApparelVTOItem {
   /** Fashion brand or designer */
   brand: string;
   /** Apparel category */
-  category: 'evening_gown' | 'business_blazer' | 'resort_wear' | 'cocktail_dress';
+  category: ApparelCategory;
   /** Primary hex color code (e.g. '#1A365D') */
   colorHex: string;
   /** Human-readable descriptive color name (e.g. 'Midnight Sapphire') */
@@ -107,9 +107,9 @@ export interface SkincareStep {
   /** Sequential step order within the routine phase */
   stepNumber: number;
   /** Daily phase */
-  phase: 'morning' | 'evening';
+  phase: SkincarePhase;
   /** Functional category */
-  stepType: 'cleanse' | 'treat' | 'barrier_repair' | 'protect';
+  stepType: SkincareStepType;
   /** Commercial product title */
   productName: string;
   /** Cosmetic/skincare brand */
@@ -147,9 +147,9 @@ export type SafetyCheckStatus = 'pass' | 'warn' | 'fail';
  */
 export interface SafetyCheck {
   /** Target safety rule evaluated */
-  id: 'comedogenic' | 'active_clash' | 'barrier_safety' | 'fabric_friction';
+  id: SafetyCheckId;
   /** Audit outcome */
-  status: 'pass' | 'warn' | 'fail';
+  status: SafetyCheckStatus;
   /** Detailed clinical finding or caution notes */
   detail: string;
 }
@@ -163,6 +163,12 @@ export interface SafetyAuditResult {
   /** Itemized safety checks */
   checks: SafetyCheck[];
   /** High-level executive safety summary */
+  summary: string;
+}
+
+export interface DermatologyGuardrailResult {
+  isSafe: boolean;
+  checks: SafetyCheck[];
   summary: string;
 }
 
@@ -196,6 +202,7 @@ export interface ConsumerBeautyProfile {
  * Execution grounding mode for AuraCura synthesis.
  */
 export type AuraCuraExecutionMode = 'auracura_grounded' | 'generic_llm';
+export type ExecutionMode = AuraCuraExecutionMode;
 
 /**
  * Complete Autonomous Bio-Harmonic eCommerce VTO & Skin-Safe Styling Dossier.
@@ -210,15 +217,11 @@ export interface AuraCuraDossier {
   /** Diurnal clinical skincare regimen */
   skincareRegimen: SkincareStep[];
   /** Multi-vector safety and barrier audit */
-  safetyAudit: {
-    isSafe: boolean;
-    checks: SafetyCheck[];
-    summary: string;
-  };
+  safetyAudit: SafetyAuditResult;
   /** Bio-harmonic styling, color theory, and lookbook advice */
   eventLookbookAdvice: string;
   /** Engine execution grounding mode */
-  executionMode: 'auracura_grounded' | 'generic_llm';
+  executionMode: AuraCuraExecutionMode;
   /** ISO-8601 timestamp string when the dossier was synthesized */
   generatedAt: string;
 }
@@ -248,7 +251,7 @@ export interface AgentTraceStep {
   /** Step identifier */
   id: string;
   /** Execution pipeline phase */
-  phase: 'diagnose' | 'audit_safety' | 'vto_simulation' | 'synthesize_regimen' | AgentPhase;
+  phase: AuraCuraAgentPhase;
   /** MCP tool or internal subsystem invoked */
   tool: string;
   /** Summary title */
@@ -258,251 +261,79 @@ export interface AgentTraceStep {
   /** Duration in milliseconds */
   durationMs: number;
   /** Step status */
-  status: 'ok' | 'warn' | 'error' | AgentStepStatus;
-  /** Optional trace source for legacy observability compatibility */
-  source?: AgentStepSource;
+  status: AuraCuraAgentStepStatus;
+  /** Optional trace source for observability */
+  source?: 'youcam_live' | 'youcam_cache' | 'fallback_vault' | 'bedrock' | 'auracura' | string;
 }
 
 // ============================================================================
-// 7. COMPATIBILITY & LEGACY MIGRATION TYPES (CuraVIP / Qloo)
+// 7. SYSTEM HEALTH, BENCHMARK & CONVERSATION RESPONSE TYPES
 // ============================================================================
 
-export type BudgetTier = 'standard_200' | 'executive_500' | 'unlimited_vip';
-
-export const BUDGET_TIER_CAPS: Record<BudgetTier, number | null> = {
-  standard_200: 200,
-  executive_500: 500,
-  unlimited_vip: null,
-};
-
-export const BUDGET_TIER_LABELS: Record<BudgetTier, string> = {
-  standard_200: 'Standard · $200',
-  executive_500: 'Executive · $500',
-  unlimited_vip: 'Unlimited VIP',
-};
-
-export type LegacyExecutionMode = 'qloo_grounded';
-export type ExecutionMode = AuraCuraExecutionMode | LegacyExecutionMode;
-
-export type TasteGraphSource = 'qloo_live' | 'curated_fallback' | 'none';
-export type AgentEngine = 'bedrock_claude' | 'autonomous_planner' | 'generic_baseline';
-
-export type CulturalCategory = 'music' | 'film' | 'dining' | 'fashion' | 'literature' | 'architecture';
-
-export const CULTURAL_CATEGORIES: readonly CulturalCategory[] = [
-  'music',
-  'film',
-  'dining',
-  'fashion',
-  'literature',
-  'architecture',
-] as const;
-
-export interface CulturalEntity {
-  id: string;
-  name: string;
-  category: CulturalCategory;
-  affinityScore: number;
-  metadata?: Record<string, unknown>;
-}
-
-export interface CulturalTasteGraph {
-  seedInterests: string[];
-  resolvedSeeds: CulturalEntity[];
-  expandedEntities: CulturalEntity[];
-  crossDomainThemes: string[];
-  source: TasteGraphSource;
-}
-
-export interface VIPTaboos {
-  alcohol: boolean;
-  dietary: string[];
-  religiousCultural: string[];
-}
-
-export interface VIPProfile {
-  id: string;
-  fullName: string;
-  role: string;
-  organization: string;
-  city: string;
-  budgetLimitUsd: number;
-  rawBio: string;
-  explicitInterests: string[];
-  taboos: VIPTaboos;
-  createdAt?: string;
-}
-
-export type VIPProfileInput = Omit<VIPProfile, 'id' | 'createdAt'> & { id?: string };
-
-export type GiftCategory = 'curated_artifact' | 'rare_vintage' | 'bespoke_craft' | 'literature_edition';
-export type GiftTier = 'signature' | 'alternative' | 'discreet';
-
-export interface GiftProposal {
-  id: string;
-  title: string;
-  brandOrArtisan: string;
-  estimatedPriceUsd: number;
-  category: GiftCategory;
-  culturalRationale: string;
-  qlooCorrelationAnchor: string;
-  purchaseUrl?: string;
-  tier?: GiftTier;
-  materials?: string[];
-  affinityScore?: number;
-}
-
-export interface DiningProposal {
-  id: string;
-  venueName: string;
-  cuisineType: string;
-  neighborhood: string;
-  vibeAnchor: string;
-  pairingNotes: string;
-  culturalRationale: string;
-  priceBand?: '$$$' | '$$$$';
-  serviceElements?: string[];
-}
-
-export type FcpaRiskLevel = 'low' | 'medium' | 'high';
-export type ComplianceCheckId = 'budget' | 'fcpa' | 'alcohol' | 'dietary' | 'religious_cultural' | 'precedent' | SafetyCheckId;
-export type ComplianceCheckStatus = 'pass' | 'warn' | 'fail';
-
-export interface ComplianceCheck {
-  id: ComplianceCheckId;
-  label?: string;
-  status: ComplianceCheckStatus;
-  detail: string;
-}
-
-export interface BlockedItem {
-  itemId: string;
-  itemName: string;
-  itemType: 'gift' | 'dining';
-  reasons: string[];
-}
-
-export interface ComplianceAuditResult {
-  isCompliant: boolean;
-  fcpaRiskLevel: FcpaRiskLevel;
-  budgetChecked: boolean;
-  tabooViolations: string[];
-  auditNotes: string;
-  checks: ComplianceCheck[];
-  blockedItems: BlockedItem[];
-  effectiveBudgetCapUsd: number | null;
-  auditedAt: string;
-}
-
-export interface ExecutiveDossier {
-  vipProfile: VIPProfile;
-  tasteGraph: CulturalTasteGraph;
-  iceBreakerScripts: string[];
-  curatedGifts: GiftProposal[];
-  diningOptions: DiningProposal[];
-  complianceAudit: ComplianceAuditResult;
-  generatedAt: string;
-  executionMode: ExecutionMode;
-  budgetTier: BudgetTier;
-  agentEngine: AgentEngine;
-  strategicSummary: string;
-  targetBudgetUsd?: number;
-}
-
-export type LegacyAgentPhase = 'deconstruct' | 'query_graph' | 'curate' | 'audit' | 'negotiate' | 'commit';
-export type AgentPhase = AuraCuraAgentPhase | LegacyAgentPhase;
-export type AgentStepStatus = 'ok' | 'warn' | 'error' | 'fallback' | 'blocked';
-export type AgentStepSource = 'qloo_live' | 'curated_fallback' | 'bedrock' | 'local' | 'auracura';
-
-export interface DossierRequest {
-  vipId: string;
-  meetingBrief?: string;
-  mode: ExecutionMode;
-  budgetTier?: BudgetTier;
-}
-
-export interface DossierResponse {
-  recordId: string;
-  dossier: ExecutiveDossier;
-  trace: AgentTraceStep[];
-}
-
-export interface DossierComparisonResponse {
-  grounded: DossierResponse;
-  generic: DossierResponse;
-}
-
-export interface DossierRecord {
-  id: string;
-  vipId: string;
-  dossier: ExecutiveDossier;
-  isBookmarked: boolean;
-  createdAt: string;
-}
-
-export interface CurationHistoryEntry {
-  id: string;
-  vipId: string;
-  itemType: 'gift' | 'dining';
-  itemName: string;
-  awardedAt: string;
-}
-
-export interface ReservationRequest {
-  vipId: string;
-  gift?: Pick<GiftProposal, 'id' | 'title' | 'brandOrArtisan' | 'estimatedPriceUsd'> &
-    Partial<Pick<GiftProposal, 'materials' | 'category'>>;
-  dining?: {
-    venueName: string;
-    partySize: number;
-    requestedDate: string;
-    privateRoom: boolean;
-    notes?: string;
+export interface BenchmarkComparisonResponse {
+  success: boolean;
+  grounded: AuraCuraDossier;
+  genericBlind: AuraCuraDossier;
+  generic: AuraCuraDossier;
+  groundedPackage: {
+    recordId: string;
+    dossier: AuraCuraDossier;
+    trace: AgentTraceStep[];
   };
-  budgetTier?: BudgetTier;
+  genericPackage: {
+    recordId: string;
+    dossier: AuraCuraDossier;
+    trace: AgentTraceStep[];
+  };
+  comparisonSummary: {
+    safetyViolationsAvoided: number;
+    chromaticHarmonyDelta: number;
+    groundedIsSafe: boolean;
+    genericBlindIsSafe: boolean;
+    verdict: string;
+  };
 }
 
-export interface ReservationOrder {
-  id: string;
-  vipId: string;
-  confirmationCode: string;
-  status: 'drafted' | 'held_for_compliance';
-  giftOrder: {
-    title: string;
-    brandOrArtisan: string;
-    estimatedPriceUsd: number;
-    handNote: string;
-  } | null;
-  diningReservation: {
-    venueName: string;
-    partySize: number;
-    requestedDate: string;
-    privateRoom: boolean;
-    serviceBrief: string;
-  } | null;
-  complianceCleared: boolean;
-  complianceNotes: string[];
-  createdAt: string;
-}
+export type DossierComparisonResponse = BenchmarkComparisonResponse;
 
-export interface TasteNegotiationResult {
-  bridgeTheme: string;
-  rationale: string;
-  resolvedProposals: GiftProposal[];
-  budgetAdjusted: boolean;
-  notes: string[];
+export interface AgentTurnResponse {
+  success: boolean;
+  response: string;
+  suggestedActions?: string[];
+  dossierDelta?: Partial<AuraCuraDossier>;
 }
 
 export interface HealthStatus {
-  status: 'ok';
+  status: string;
   service: string;
   version: string;
-  qlooConfigured: boolean;
+  youcam: {
+    configured: boolean;
+    baseUrl: string;
+    mode: string;
+  };
+  youcamConfigured: boolean;
+  youcamBaseUrl: string;
+  bedrock: {
+    configured: boolean;
+    region: string;
+  };
   bedrockConfigured: boolean;
+  cache: {
+    skinCacheEntries: number;
+    vtoCacheEntries: number;
+    totalHitRatio: number;
+  };
+  mcp: {
+    endpoint: string;
+    toolsCount: number;
+    tools: string[];
+  };
   mcpEndpoint: string;
+  timestamp: string;
 }
 
-// Modern AuraCura Aliases for forward-compatibility
+// Aliases for consumer profiles and dossiers
 export type UserProfile = ConsumerBeautyProfile;
 export type AuraCuraProfile = ConsumerBeautyProfile;
-export type CuraVIPDossier = AuraCuraDossier;
+export type AuraCuraDossierResponse = AuraCuraDossier;

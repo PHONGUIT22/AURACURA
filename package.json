@@ -1,8 +1,8 @@
 {
-  "name": "curavip-agent",
+  "name": "auracura",
   "version": "1.0.0",
   "private": true,
-  "description": "Autonomous Cultural Intelligence & VIP Relationship Concierge powered by Qloo and Model Context Protocol",
+  "description": "Autonomous Bio-Harmonic eCommerce VTO & Skin-Safe Styling Engine powered by Perfect Corp YouCam API and Model Context Protocol",
   "workspaces": [
     "frontend",
     "backend-mcp"
@@ -20,15 +20,16 @@
     "concurrently": "^9.1.0"
   },
   "keywords": [
-    "qloo",
-    "taste-graph",
+    "youcam",
+    "perfect-corp",
+    "vto",
+    "apparel-vto",
+    "skin-ai",
     "mcp",
     "model-context-protocol",
     "agentic",
-    "bedrock",
-    "claude",
-    "concierge",
-    "cultural-intelligence"
+    "dermatology",
+    "ecommerce"
   ],
   "author": "PHONGUIT22",
   "license": "MIT",

@@ -1,8 +1,8 @@
 {
-  "name": "curavip-frontend",
+  "name": "auracura-frontend",
   "version": "1.0.0",
   "private": true,
-  "description": "CuraVIP Concierge Console — dark luxury Next.js 15 interface for Qloo-grounded executive dossiers",
+  "description": "AuraCura Console — dark luxury Next.js 15 interface for YouCam-grounded Bio-Harmonic VTO and skin analysis",
   "type": "module",
   "license": "MIT",
   "scripts": {

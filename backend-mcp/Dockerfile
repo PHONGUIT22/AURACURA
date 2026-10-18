@@ -1,5 +1,5 @@
-# CuraVIP Backend MCP - High-Performance Node.js 22 Environment
-# Supports native node:sqlite, Qloo Taste Graph grounding, and MCP SSE protocol
+# AuraCura Backend MCP - High-Performance Node.js 22 Environment
+# Supports native node:sqlite, Perfect Corp YouCam API grounding, and MCP SSE protocol
 
 FROM node:22-alpine AS builder
 
@@ -20,7 +20,7 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 ENV PORT=3001
-ENV DB_PATH=/app/data/curavip.db
+ENV DB_PATH=/app/data/auracura.db
 
 # Create persistent storage directory for SQLite vault and assign to non-root node user
 RUN mkdir -p /app/data && chown -R node:node /app

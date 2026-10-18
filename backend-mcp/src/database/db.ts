@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const DEFAULT_DB_DIR = path.resolve(__dirname, '../../data');
-const DEFAULT_DB_PATH = path.join(DEFAULT_DB_DIR, 'curavip.db');
+const DEFAULT_DB_PATH = path.join(DEFAULT_DB_DIR, 'auracura.db');
 
 let dbInstance: DatabaseSync | null = null;
 let resolvedPath: string | null = null;
@@ -167,7 +167,7 @@ export function initDB(): DatabaseSync {
   dbInstance = db;
   resolvedPath = dbPath;
   if (!process.env.VITEST) {
-    console.log(`[SQLite] CuraVIP vault ready at ${isMemory ? 'in-memory' : dbPath}`);
+    console.log(`[SQLite] AuraCura vault ready at ${isMemory ? 'in-memory' : dbPath}`);
   }
   return db;
 }

@@ -3,16 +3,16 @@ services:
     build:
       context: ./backend-mcp
       dockerfile: Dockerfile
-    container_name: curavip-backend-mcp
+    container_name: auracura-backend-mcp
     restart: unless-stopped
     ports:
       - "3001:3001"
     environment:
       - PORT=3001
       - NODE_ENV=production
-      - DB_PATH=/app/data/curavip.db
-      - QLOO_API_KEY=${QLOO_API_KEY:-}
-      - QLOO_API_URL=${QLOO_API_URL:-https://hackathon.api.qloo.com}
+      - DB_PATH=/app/data/auracura.db
+      - YOUCAM_API_KEY=${YOUCAM_API_KEY:-}
+      - YOUCAM_BASE_URL=${YOUCAM_BASE_URL:-https://yce-api-01.makeupar.com}
       - AWS_REGION=${AWS_REGION:-us-east-1}
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-}
@@ -24,7 +24,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: curavip-frontend
+    container_name: auracura-frontend
     restart: unless-stopped
     ports:
       - "3000:3000"

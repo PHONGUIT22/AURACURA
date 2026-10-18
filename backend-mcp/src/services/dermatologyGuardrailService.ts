@@ -61,6 +61,33 @@ export const SKIN_SOOTHING_FABRIC_PATTERNS = [
   /\bbelgian\s+linen\b/i,
 ];
 
+export const DERMATOLOGY_SAFETY_RULES = [
+  {
+    id: 'comedogenicity_screening',
+    name: 'Rule 1: Comedogenicity Index Auditing',
+    threshold: '<= 2 for acneic and compromised skin',
+    description: 'Prohibits high pore-clogging comedogenic matrices (e.g., coconut oil, isopropyl myristate, ethylhexyl palmitate) for oily and acne-prone skin types.',
+  },
+  {
+    id: 'active_clash_prevention',
+    name: 'Rule 2: Direct Active Clashes & Compromised Barrier Integrity',
+    threshold: 'Zero unbuffered acid/retinoid stacking',
+    description: 'Bans high-strength glycolic acid, denatured alcohol, and aggressive retinoids when erythema score > 60 or lipid barrier is compromised.',
+  },
+  {
+    id: 'textile_friction_index',
+    name: 'Rule 3: Garment Micro-Friction Coefficient',
+    threshold: 'mu <= 0.18 for compromised and erythematous skin',
+    description: 'Requires low-friction textiles (Mulberry silk mu ~0.14, fine Egyptian cotton mu ~0.16) to prevent mechanical barrier damage and friction-induced flares.',
+  },
+  {
+    id: 'chromatic_color_harmony',
+    name: 'Rule 4: Optical Chromatic Redness Cancellation',
+    threshold: '>= +10 optical harmony delta vs baseline',
+    description: 'Applies color science principles (cool emerald, muted jade, sage green undertones) to optically counteract facial erythema.',
+  },
+];
+
 export class DermatologyGuardrailService {
   /**
    * Rule 1: Comedogenicity Check
