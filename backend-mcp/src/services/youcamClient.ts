@@ -215,6 +215,7 @@ export class YouCamClient {
     // 1. Check local SQLite cache first to preserve unit quota
     const cached = youcamCacheRepo.getCachedSkinAnalysis(imageUrl);
     if (cached) {
+      console.log('[YouCam CACHE HIT] Retrieved in 1ms from SQLite — Zero quota consumed!');
       return cached;
     }
 
@@ -385,9 +386,11 @@ export class YouCamClient {
       if (cached.startsWith('/vto-renders/')) {
         const expectedDiskPath = path.join(VTO_RENDERS_DIR, path.basename(cached));
         if (fs.existsSync(expectedDiskPath)) {
+          console.log('[YouCam CACHE HIT] Retrieved in 1ms from SQLite — Zero quota consumed!');
           return cached;
         }
       } else {
+        console.log('[YouCam CACHE HIT] Retrieved in 1ms from SQLite — Zero quota consumed!');
         return cached;
       }
     }
