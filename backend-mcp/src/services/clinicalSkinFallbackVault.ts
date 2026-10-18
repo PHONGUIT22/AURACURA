@@ -22,7 +22,7 @@ export const CLINICAL_FALLBACK_PERSONAS: Record<string, PersonaDossierPackage> =
       eventContext: 'Black Tie Charity Gala at SF MOMA (Sudden acute facial flare-up crisis)',
       budgetLimitUsd: 1200,
       knownAllergies: ['Fragrance', 'Denatured Alcohol', 'High-concentration Salicylic Acid'],
-      userSelfieUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80',
+      userSelfieUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=85',
       preferredStyle: 'Sculptural Modern Silk Evening Wear',
     },
     skinMetrics: {
@@ -48,9 +48,9 @@ export const CLINICAL_FALLBACK_PERSONAS: Record<string, PersonaDossierPackage> =
       chromaticHarmonyScore: 96,
       priceUsd: 680,
       productUrl: 'https://auracura.luxury/collections/evening/silk-sage-column',
-      tryonImageUrl: 'https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=800&q=80',
+      tryonImageUrl: 'https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=800&q=85',
     },
-    vtoRenderedUrl: 'https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=800&q=80',
+    vtoRenderedUrl: '/vto-renders/vto_ef528b1559c56764.jpg',
   },
 
   'marcus-reed': {
@@ -61,7 +61,7 @@ export const CLINICAL_FALLBACK_PERSONAS: Record<string, PersonaDossierPackage> =
       eventContext: 'Global AI Summit Keynote Presentation (High-definition stage lighting & dry air)',
       budgetLimitUsd: 2500,
       knownAllergies: ['Essential Oils', 'Wool Lanolin'],
-      userSelfieUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80',
+      userSelfieUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=85',
       preferredStyle: 'Sharp Neapolitan Business Luxury',
     },
     skinMetrics: {
@@ -87,9 +87,9 @@ export const CLINICAL_FALLBACK_PERSONAS: Record<string, PersonaDossierPackage> =
       chromaticHarmonyScore: 92,
       priceUsd: 1450,
       productUrl: 'https://auracura.luxury/collections/business/midnight-navy-blazer',
-      tryonImageUrl: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=800&q=80',
+      tryonImageUrl: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=800&q=85',
     },
-    vtoRenderedUrl: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=800&q=80',
+    vtoRenderedUrl: '/vto-renders/vto_b6544138f205ac9c.jpg',
   },
 
   'elena-gomez': {
@@ -100,7 +100,7 @@ export const CLINICAL_FALLBACK_PERSONAS: Record<string, PersonaDossierPackage> =
       eventContext: 'Tulum Beachfront Sunset Wedding (High UV Index & Tropical Humidity)',
       budgetLimitUsd: 1800,
       knownAllergies: ['Chemical Sunscreen (Avobenzone/Octinoxate)', 'Synthetic Dyes'],
-      userSelfieUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=80',
+      userSelfieUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=85',
       preferredStyle: 'Effortless Resort Bohemian Luxury',
     },
     skinMetrics: {
@@ -126,9 +126,9 @@ export const CLINICAL_FALLBACK_PERSONAS: Record<string, PersonaDossierPackage> =
       chromaticHarmonyScore: 98,
       priceUsd: 590,
       productUrl: 'https://auracura.luxury/collections/resort/terracotta-upf50-maxi',
-      tryonImageUrl: 'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=800&q=80',
+      tryonImageUrl: 'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=800&q=85',
     },
-    vtoRenderedUrl: 'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=800&q=80',
+    vtoRenderedUrl: '/vto-renders/vto_76d33b49d63c7bf3.jpg',
   },
 };
 
@@ -138,10 +138,18 @@ export const CLINICAL_FALLBACK_PERSONAS: Record<string, PersonaDossierPackage> =
  */
 export function getFallbackSkinMetrics(seedKeyOrUrl: string): SkinMetrics {
   const normalized = seedKeyOrUrl.toLowerCase();
-  if (normalized.includes('marcus') || normalized.includes('reed')) {
+  if (
+    normalized.includes('marcus') ||
+    normalized.includes('reed') ||
+    normalized.includes('1507003211169')
+  ) {
     return { ...CLINICAL_FALLBACK_PERSONAS['marcus-reed'].skinMetrics };
   }
-  if (normalized.includes('elena') || normalized.includes('gomez')) {
+  if (
+    normalized.includes('elena') ||
+    normalized.includes('gomez') ||
+    normalized.includes('1544005313')
+  ) {
     return { ...CLINICAL_FALLBACK_PERSONAS['elena-gomez'].skinMetrics };
   }
   return { ...CLINICAL_FALLBACK_PERSONAS['sarah-chen'].skinMetrics };
@@ -152,10 +160,18 @@ export function getFallbackSkinMetrics(seedKeyOrUrl: string): SkinMetrics {
  */
 export function getFallbackVTOImage(personImg: string, _garmentImg?: string): string {
   const normalized = personImg.toLowerCase();
-  if (normalized.includes('marcus') || normalized.includes('reed')) {
+  if (
+    normalized.includes('marcus') ||
+    normalized.includes('reed') ||
+    normalized.includes('1507003211169')
+  ) {
     return CLINICAL_FALLBACK_PERSONAS['marcus-reed'].vtoRenderedUrl;
   }
-  if (normalized.includes('elena') || normalized.includes('gomez')) {
+  if (
+    normalized.includes('elena') ||
+    normalized.includes('gomez') ||
+    normalized.includes('1544005313')
+  ) {
     return CLINICAL_FALLBACK_PERSONAS['elena-gomez'].vtoRenderedUrl;
   }
   return CLINICAL_FALLBACK_PERSONAS['sarah-chen'].vtoRenderedUrl;

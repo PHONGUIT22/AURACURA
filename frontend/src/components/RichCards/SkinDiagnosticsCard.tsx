@@ -129,13 +129,20 @@ export const SkinDiagnosticsCard: React.FC<SkinDiagnosticsCardProps> = ({
           </div>
         </div>
 
-        {/* Undertone Badge */}
-        <div className="flex items-center gap-2 px-3 py-1.5 bg-[#161820] border border-[#222530] rounded-xl">
-          <span
-            className="w-3.5 h-3.5 rounded-full border border-white/20 shadow-inner"
-            style={{ backgroundColor: undertone.swatch }}
-          />
-          <span className="text-xs font-medium text-[#F3F4F6]">{undertone.label}</span>
+        {/* YouCam S2S v2.0 API & Undertone Badges */}
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#10B981]/10 border border-[#10B981]/30 text-[#10B981] text-xs font-mono font-medium">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-pulse" />
+            Powered by YouCam S2S v2.0 Skin Analysis API
+          </div>
+
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-[#161820] border border-[#222530] rounded-xl">
+            <span
+              className="w-3.5 h-3.5 rounded-full border border-white/20 shadow-inner"
+              style={{ backgroundColor: undertone.swatch }}
+            />
+            <span className="text-xs font-medium text-[#F3F4F6]">{undertone.label}</span>
+          </div>
         </div>
       </div>
 

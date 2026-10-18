@@ -78,7 +78,7 @@ describe('Model Context Protocol (MCP) Tools', () => {
     });
 
     expect(result).toBeDefined();
-    expect(result.tryonImageUrl).toContain('unsplash.com');
+    expect(result.tryonImageUrl).toMatch(/unsplash\.com|\/vto-renders\//);
     expect(result.chromaticHarmonyScore).toBeGreaterThanOrEqual(95);
     expect(result.fabricFrictionVerdict).toMatch(/Clearance|0\.15/);
   });

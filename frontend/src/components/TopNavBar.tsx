@@ -30,7 +30,7 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({
     <header className="w-full bg-[#070709] border-b border-[#222530] px-6 py-4 sticky top-0 z-30 backdrop-blur-md">
       <div className="w-full max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
         {/* Brand Crest & Subtitle */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 flex-wrap">
           <AuraCuraLogo size="md" />
           <div className="hidden lg:block h-8 w-px bg-[#222530]" />
           <div className="hidden lg:flex items-center gap-2">
@@ -42,6 +42,10 @@ export const TopNavBar: React.FC<TopNavBarProps> = ({
               <span className="w-2 h-2 rounded-full bg-[#10B981] animate-ping" />
               <span>Bio-Harmonic Engine Active</span>
             </span>
+          </div>
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[#D4AF37] text-[11px] font-mono font-semibold tracking-wide">
+            <Sparkles className="w-3 h-3 text-[#D4AF37]" />
+            <span>Official Perfect Corp YouCam API Hackathon 2026 Entry</span>
           </div>
         </div>
 

@@ -20,8 +20,11 @@ export const ApparelAndMakeupVTOCard: React.FC<ApparelAndMakeupVTOCardProps> = (
   const [sliderPos, setSliderPos] = useState<number>(50);
   const [viewMode, setViewMode] = useState<'slider' | 'split'>('slider');
 
-  const beforeImage = userSelfieUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80';
-  const afterImage = apparelItem.tryonImageUrl || 'https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=800&q=80';
+  const FALLBACK_BEFORE_IMAGE = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=85';
+  const FALLBACK_AFTER_IMAGE = 'https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=800&q=85';
+
+  const beforeImage = userSelfieUrl || FALLBACK_BEFORE_IMAGE;
+  const afterImage = apparelItem.tryonImageUrl || FALLBACK_AFTER_IMAGE;
 
   const harmonyScore = apparelItem.chromaticHarmonyScore || 94;
 
@@ -51,36 +54,43 @@ export const ApparelAndMakeupVTOCard: React.FC<ApparelAndMakeupVTOCardProps> = (
           </div>
         </div>
 
-        {/* View Mode Toggle */}
-        <div className="flex items-center gap-1.5 p-1 bg-[#161820] border border-[#222530] rounded-xl">
-          <button
-            type="button"
-            onClick={() => {
-              soundService.playToggleClick();
-              setViewMode('slider');
-            }}
-            className={`px-3 py-1 text-xs font-semibold rounded-lg transition-all ${
-              viewMode === 'slider'
-                ? 'bg-[#10B981] text-[#070709] shadow-sm'
-                : 'text-[#9CA3AF] hover:text-[#F3F4F6]'
-            }`}
-          >
-            Interactive Slider
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              soundService.playToggleClick();
-              setViewMode('split');
-            }}
-            className={`px-3 py-1 text-xs font-semibold rounded-lg transition-all ${
-              viewMode === 'split'
-                ? 'bg-[#10B981] text-[#070709] shadow-sm'
-                : 'text-[#9CA3AF] hover:text-[#F3F4F6]'
-            }`}
-          >
-            Side-by-Side Split
-          </button>
+        {/* YouCam Cloth VTO API Badge & View Mode Toggle */}
+        <div className="flex flex-wrap items-center gap-2.5">
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[#D4AF37] text-xs font-mono font-medium">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37] animate-pulse" />
+            Powered by YouCam S2S v2.0 Cloth VTO API
+          </div>
+
+          <div className="flex items-center gap-1.5 p-1 bg-[#161820] border border-[#222530] rounded-xl">
+            <button
+              type="button"
+              onClick={() => {
+                soundService.playToggleClick();
+                setViewMode('slider');
+              }}
+              className={`px-3 py-1 text-xs font-semibold rounded-lg transition-all ${
+                viewMode === 'slider'
+                  ? 'bg-[#10B981] text-[#070709] shadow-sm'
+                  : 'text-[#9CA3AF] hover:text-[#F3F4F6]'
+              }`}
+            >
+              Interactive Slider
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                soundService.playToggleClick();
+                setViewMode('split');
+              }}
+              className={`px-3 py-1 text-xs font-semibold rounded-lg transition-all ${
+                viewMode === 'split'
+                  ? 'bg-[#10B981] text-[#070709] shadow-sm'
+                  : 'text-[#9CA3AF] hover:text-[#F3F4F6]'
+              }`}
+            >
+              Side-by-Side Split
+            </button>
+          </div>
         </div>
       </div>
 
@@ -94,6 +104,10 @@ export const ApparelAndMakeupVTOCard: React.FC<ApparelAndMakeupVTOCardProps> = (
               src={afterImage}
               alt="After AI Try-On"
               className="absolute inset-0 w-full h-full object-cover"
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = FALLBACK_AFTER_IMAGE;
+              }}
             />
             <div className="absolute top-3 right-3 bg-[#070709]/80 backdrop-blur-md px-3 py-1.5 rounded-xl border border-[#D4AF37]/40 text-xs font-bold text-[#D4AF37] flex items-center gap-1.5 shadow-lg">
               <Sparkles className="w-3.5 h-3.5" />
@@ -110,6 +124,10 @@ export const ApparelAndMakeupVTOCard: React.FC<ApparelAndMakeupVTOCardProps> = (
                 alt="Before Flare-Up Selfie"
                 className="absolute inset-0 w-full h-full object-cover max-w-none"
                 style={{ width: '100%', height: '100%', objectPosition: 'left center' }}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = FALLBACK_BEFORE_IMAGE;
+                }}
               />
               <div className="absolute top-3 left-3 bg-[#070709]/80 backdrop-blur-md px-3 py-1.5 rounded-xl border border-rose-500/40 text-xs font-bold text-rose-300 flex items-center gap-1.5 shadow-lg">
                 <Eye className="w-3.5 h-3.5" />
@@ -142,13 +160,29 @@ export const ApparelAndMakeupVTOCard: React.FC<ApparelAndMakeupVTOCardProps> = (
           /* Side-by-Side Split View */
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="relative h-80 rounded-2xl overflow-hidden border border-[#222530] group">
-              <img src={beforeImage} alt="Before Selfie" className="w-full h-full object-cover" />
+              <img
+                src={beforeImage}
+                alt="Before Selfie"
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = FALLBACK_BEFORE_IMAGE;
+                }}
+              />
               <div className="absolute top-3 left-3 bg-[#070709]/85 backdrop-blur-md px-3 py-1 rounded-lg border border-rose-500/30 text-xs font-semibold text-rose-300">
                 BEFORE: Raw Diagnostic Selfie
               </div>
             </div>
             <div className="relative h-80 rounded-2xl overflow-hidden border border-[#D4AF37]/40 group shadow-lg">
-              <img src={afterImage} alt="After AI VTO" className="w-full h-full object-cover" />
+              <img
+                src={afterImage}
+                alt="After AI VTO"
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = FALLBACK_AFTER_IMAGE;
+                }}
+              />
               <div className="absolute top-3 left-3 bg-[#070709]/85 backdrop-blur-md px-3 py-1 rounded-lg border border-[#D4AF37]/50 text-xs font-semibold text-[#D4AF37] flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5" />
                 <span>AFTER: Couture Simulation</span>

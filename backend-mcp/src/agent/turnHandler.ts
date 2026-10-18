@@ -81,7 +81,7 @@ export async function orchestrateAuraCuraDossier(
   // =========================================================================
   const t1 = Date.now();
   const diagResult = await youcamSkinDiagnosticianTool.handler({
-    imageUrl: profile.userSelfieUrl || 'https://images.unsplash.com/sarah-chen.jpg',
+    imageUrl: profile.userSelfieUrl || CLINICAL_FALLBACK_PERSONAS['sarah-chen'].profile.userSelfieUrl,
     consumerId: profile.id,
   });
 
@@ -89,7 +89,7 @@ export async function orchestrateAuraCuraDossier(
     id: `step_diag_${Date.now()}`,
     phase: 'diagnose',
     tool: 'youcam_skin_diagnostician',
-    title: 'Facial Skin Vision & Biomarker Diagnosis',
+    title: 'Perfect Corp YouCam AI Skin Analysis API (/s2s/v2.0/task/skin-analysis)',
     detail: `Clinical scan complete for skin age ${diagResult.skinMetrics.skinAge} (chronological: ${diagResult.skinMetrics.chronologicalAge}). Redness: ${diagResult.skinMetrics.rednessScore}/100, Acne: ${diagResult.skinMetrics.acneScore}/100, Moisture: ${diagResult.skinMetrics.moistureScore}/100. Barrier status: '${diagResult.skinMetrics.barrierStatus}'. ${diagResult.barrierIntegrityAlert || 'Stratum corneum intact.'}`,
     durationMs: Date.now() - t1,
     status: diagResult.skinMetrics.barrierStatus === 'severely_damaged' ? 'warn' : 'ok',
@@ -151,7 +151,7 @@ export async function orchestrateAuraCuraDossier(
   // =========================================================================
   const t3 = Date.now();
   const vtoResult = await youcamVtoStylistTool.handler({
-    personImageUrl: profile.userSelfieUrl || 'https://images.unsplash.com/selfie.jpg',
+    personImageUrl: profile.userSelfieUrl || CLINICAL_FALLBACK_PERSONAS['sarah-chen'].profile.userSelfieUrl,
     garmentImageUrl: defaultApparel.tryonImageUrl,
     garmentCategory: (targetCategory || defaultApparel.category) as ApparelCategory,
     garmentName: defaultApparel.name,
@@ -169,8 +169,8 @@ export async function orchestrateAuraCuraDossier(
     id: `step_vto_${Date.now()}`,
     phase: 'vto_simulation',
     tool: 'youcam_vto_stylist',
-    title: `Generative VTO & Chromatic Harmony (${vtoResult.chromaticHarmonyScore}/100)`,
-    detail: `Simulated '${vtoResult.apparelItem.name}'. Chromatic rationale: ${vtoResult.chromaticRationale} Textile comfort: ${vtoResult.fabricFrictionVerdict}`,
+    title: 'Perfect Corp YouCam Cloth VTO API (/s2s/v2.0/task/cloth)',
+    detail: `Simulated '${vtoResult.apparelItem.name}' (Chromatic Harmony: ${vtoResult.chromaticHarmonyScore}/100). Chromatic rationale: ${vtoResult.chromaticRationale} Textile comfort: ${vtoResult.fabricFrictionVerdict}`,
     durationMs: Date.now() - t3,
     status: 'ok',
   };
@@ -198,9 +198,10 @@ export async function orchestrateAuraCuraDossier(
   };
   await emitStep(step4);
 
-  // Incorporate rendered tryon and final styling
+  // Incorporate rendered tryon, live skinMetrics, and final styling
   const finalDossier: AuraCuraDossier = {
     ...holistic.dossier,
+    skinMetrics: diagResult.skinMetrics,
     apparelVTO: {
       ...holistic.dossier.apparelVTO,
       tryonImageUrl: vtoResult.tryonImageUrl,

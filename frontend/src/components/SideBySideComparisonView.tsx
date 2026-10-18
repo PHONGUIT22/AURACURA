@@ -186,9 +186,13 @@ export const SideBySideComparisonView: React.FC<SideBySideComparisonViewProps> =
             <div className="p-3 bg-rose-950/20 rounded-xl border border-rose-500/30 mb-4">
               <div className="flex items-center gap-3">
                 <img
-                  src={genericDossier?.apparelVTO?.tryonImageUrl || 'https://images.unsplash.com/photo-1518895949257-7621c3c786d7?auto=format&fit=crop&w=400&q=80'}
+                  src={genericDossier?.apparelVTO?.tryonImageUrl || 'https://images.unsplash.com/photo-1518895949257-7621c3c786d7?auto=format&fit=crop&w=800&q=85'}
                   alt="Generic Scarlet Dress"
                   className="w-16 h-16 rounded-lg object-cover border border-rose-500 shrink-0"
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = 'https://images.unsplash.com/photo-1518895949257-7621c3c786d7?auto=format&fit=crop&w=800&q=85';
+                  }}
                 />
                 <div className="min-w-0">
                   <span className="text-[10px] font-mono uppercase font-bold text-rose-400">Chromatic Clash: 38 / 100</span>
@@ -281,9 +285,13 @@ export const SideBySideComparisonView: React.FC<SideBySideComparisonViewProps> =
             <div className="p-3 bg-[#161820] rounded-xl border border-[#10B981]/30 mb-4">
               <div className="flex items-center gap-3">
                 <img
-                  src={groundedDossier?.apparelVTO?.tryonImageUrl || 'https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=400&q=80'}
+                  src={groundedDossier?.apparelVTO?.tryonImageUrl || 'https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=800&q=85'}
                   alt="Grounded Sage Green Dress"
                   className="w-16 h-16 rounded-lg object-cover border border-[#10B981] shrink-0"
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = 'https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=800&q=85';
+                  }}
                 />
                 <div className="min-w-0">
                   <span className="text-[10px] font-mono uppercase font-bold text-[#10B981]">Optimal Harmony: 96 / 100</span>

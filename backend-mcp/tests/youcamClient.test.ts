@@ -63,7 +63,7 @@ describe('YouCamClient & AuraCura Data Layer', () => {
       const renderedUrl = await client.generateApparelTryOn(personImg, garmentImg);
 
       expect(renderedUrl).toBeDefined();
-      expect(renderedUrl).toContain('unsplash.com');
+      expect(renderedUrl).toMatch(/unsplash\.com|\/vto-renders\//);
 
       // Verify caching
       const cachedVTO = youcamCacheRepo.getCachedVTO(personImg, garmentImg);

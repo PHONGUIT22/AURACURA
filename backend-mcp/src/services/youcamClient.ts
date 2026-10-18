@@ -9,11 +9,18 @@
  *                    -> Extracts rendered S3 JPG URL (data.results.url)
  */
 
+import fs from 'node:fs';
+import path from 'node:path';
 import zlib from 'node:zlib';
+import { fileURLToPath } from 'node:url';
 import { envConfig, isRealSecret } from '../config/env.js';
 import type { SkinMetrics } from '../types/index.js';
 import { getFallbackSkinMetrics, getFallbackVTOImage } from './clinicalSkinFallbackVault.js';
 import { youcamCacheRepo } from '../database/youcamCacheRepo.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const VTO_RENDERS_DIR = path.resolve(__dirname, '../../../frontend/public/vto-renders');
 
 export interface YouCamS2STaskResponse {
   status?: number;
@@ -173,13 +180,25 @@ export class YouCamClient {
   }
 
   /**
-   * Ensures portrait URLs sent to YouCam have >60% face area coverage.
+   * Ensures portrait URLs sent to YouCam Skin Analysis have >60% face area coverage.
    * For images.unsplash.com URLs, sets `?auto=format&fit=facearea&facepad=1.6&w=800&h=800&q=85`.
    */
   public prepareSkinImageUrl(imageUrl: string): string {
     if (imageUrl.includes('images.unsplash.com')) {
       const basePart = imageUrl.split('?')[0];
       return `${basePart}?auto=format&fit=facearea&facepad=1.6&w=800&h=800&q=85`;
+    }
+    return imageUrl;
+  }
+
+  /**
+   * Ensures person & garment URLs sent to YouCam Cloth VTO preserve full upper torso/shoulders
+   * (`?auto=format&fit=crop&w=800&q=85` without `fit=facearea`).
+   */
+  public prepareClothImageUrl(imageUrl: string): string {
+    if (imageUrl.includes('images.unsplash.com')) {
+      const basePart = imageUrl.split('?')[0];
+      return `${basePart}?auto=format&fit=crop&w=800&q=85`;
     }
     return imageUrl;
   }
@@ -347,16 +366,30 @@ export class YouCamClient {
   /**
    * Generates a virtual try-on rendering merging a user image with a target garment
    * via Perfect Corp S2S v2.0 Cloth VTO (`/s2s/v2.0/task/cloth`).
+   * Downloads the temporary S3 render immediately and saves it permanently to
+   * `frontend/public/vto-renders/vto_${hash}.jpg` so it never expires after 2 hours.
    */
   async generateApparelTryOn(personImg: string, garmentImg: string): Promise<string> {
     if (!personImg || !garmentImg) {
       return getFallbackVTOImage(personImg || 'default', garmentImg);
     }
 
-    // 1. Check local SQLite cache
+    const comboHash = youcamCacheRepo.hashVtoPair(personImg, garmentImg).slice(0, 16);
+    const localFileName = `vto_${comboHash}.jpg`;
+    const localFilePath = path.join(VTO_RENDERS_DIR, localFileName);
+    const publicRenderPath = `/vto-renders/${localFileName}`;
+
+    // 1. Check local SQLite cache (ignore any expired temporary S3 presigned URLs)
     const cached = youcamCacheRepo.getCachedVTO(personImg, garmentImg);
-    if (cached) {
-      return cached;
+    if (cached && !cached.startsWith('https://yce-us.s3')) {
+      if (cached.startsWith('/vto-renders/')) {
+        const expectedDiskPath = path.join(VTO_RENDERS_DIR, path.basename(cached));
+        if (fs.existsSync(expectedDiskPath)) {
+          return cached;
+        }
+      } else {
+        return cached;
+      }
     }
 
     // 2. Fall back to Clinical Vault if no valid API key
@@ -366,6 +399,9 @@ export class YouCamClient {
       return fallbackUrl;
     }
 
+    const preparedPersonUrl = this.prepareClothImageUrl(personImg);
+    const preparedGarmentUrl = this.prepareClothImageUrl(garmentImg);
+
     try {
       // 3. Create Cloth VTO Task via POST /s2s/v2.0/task/cloth
       const createEndpoint = `${this.baseUrl}/s2s/v2.0/task/cloth`;
@@ -373,8 +409,8 @@ export class YouCamClient {
         method: 'POST',
         headers: this.getHeaders(),
         body: JSON.stringify({
-          src_file_url: personImg,
-          ref_file_url: garmentImg,
+          src_file_url: preparedPersonUrl,
+          ref_file_url: preparedGarmentUrl,
           garment_category: 'full_body',
         }),
         signal: AbortSignal.timeout(Math.max(15000, this.timeoutMs * 1.5)),
@@ -412,20 +448,42 @@ export class YouCamClient {
         const data = pollJson.data || {};
 
         if (data.task_status === 'success') {
-          const renderedUrl = data.results?.url;
-          if (!renderedUrl) {
+          const renderedS3Url = data.results?.url;
+          if (!renderedS3Url) {
             throw new Error(`Missing data.results.url in completed Cloth VTO task ${taskId}`);
           }
 
-          console.log('[YouCam LIVE] Cloth VTO Rendered S3 URL:', renderedUrl);
+          console.log('[YouCam LIVE] Cloth VTO Rendered S3 URL:', renderedS3Url);
+
+          // 5. Immediately download the S3 image and save to frontend/public/vto-renders/
+          const imgRes = await fetch(renderedS3Url, {
+            signal: AbortSignal.timeout(this.timeoutMs),
+          });
+          if (!imgRes.ok) {
+            throw new Error(`Failed to download S3 Cloth VTO image (${imgRes.status})`);
+          }
+
+          const imgBuffer = Buffer.from(await imgRes.arrayBuffer());
+          fs.mkdirSync(VTO_RENDERS_DIR, { recursive: true });
+          fs.writeFileSync(localFilePath, imgBuffer);
+          console.log(`[YouCam LIVE] Saved permanent VTO asset to frontend/public${publicRenderPath} (${imgBuffer.length} bytes)`);
 
           if (this.lastTaskTelemetry) {
             this.lastTaskTelemetry.vtoTaskId = taskId;
-            this.lastTaskTelemetry.vtoS3Url = renderedUrl;
+            this.lastTaskTelemetry.vtoS3Url = publicRenderPath;
+          } else {
+            this.lastTaskTelemetry = {
+              taskId,
+              taskStatus: 'success',
+              pollCount: attempt,
+              pollIntervalMs: 2000,
+              vtoTaskId: taskId,
+              vtoS3Url: publicRenderPath,
+            };
           }
 
-          youcamCacheRepo.cacheVTO(personImg, garmentImg, renderedUrl);
-          return renderedUrl;
+          youcamCacheRepo.cacheVTO(personImg, garmentImg, publicRenderPath);
+          return publicRenderPath;
         }
 
         if (data.task_status === 'error') {
@@ -438,6 +496,11 @@ export class YouCamClient {
       if (process.env.DEBUG_YOUCAM === 'true') {
         const msg = err instanceof Error ? err.message : String(err);
         console.warn(`[YouCamClient] Live cloth VTO fallback engaged (${msg}).`);
+      }
+      // If a permanent local VTO render already exists on disk, prefer it over fallback
+      if (fs.existsSync(localFilePath)) {
+        youcamCacheRepo.cacheVTO(personImg, garmentImg, publicRenderPath);
+        return publicRenderPath;
       }
       const fallbackUrl = getFallbackVTOImage(personImg, garmentImg);
       youcamCacheRepo.cacheVTO(personImg, garmentImg, fallbackUrl);

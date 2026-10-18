@@ -162,11 +162,12 @@ export function seedDemoData(): { inserted: number; total: number; beautyProfile
     }
   }
 
-  // Seed AuraCura Clinical Beauty Profiles (Sarah Chen, Marcus Reed, Elena Gomez)
+  // Seed & sync AuraCura Clinical Beauty Profiles (Sarah Chen, Marcus Reed, Elena Gomez)
   let beautyProfilesInserted = 0;
-  for (const [key, pkg] of Object.entries(CLINICAL_FALLBACK_PERSONAS)) {
-    if (!beautyProfileRepo.getProfile(pkg.profile.id)) {
-      beautyProfileRepo.upsertProfile(pkg.profile);
+  for (const [, pkg] of Object.entries(CLINICAL_FALLBACK_PERSONAS)) {
+    const existing = beautyProfileRepo.getProfile(pkg.profile.id);
+    beautyProfileRepo.upsertProfile(pkg.profile);
+    if (!existing) {
       beautyProfilesInserted += 1;
     }
   }

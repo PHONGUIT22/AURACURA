@@ -55,6 +55,13 @@ const PORT = envConfig.PORT;
 app.use(cors({ origin: '*' }));
 app.use(express.json());
 
+// Serve persisted YouCam VTO rendered images from frontend/public/vto-renders
+const vtoRendersDir = path.resolve(__dirname, '../../frontend/public/vto-renders');
+if (!fs.existsSync(vtoRendersDir)) {
+  fs.mkdirSync(vtoRendersDir, { recursive: true });
+}
+app.use('/vto-renders', express.static(vtoRendersDir));
+
 // Normalize consecutive slashes (e.g., //api -> /api) to prevent 404 in Express 5
 app.use((req, res, next) => {
   req.url = req.url.replace(/\/{2,}/g, '/');
