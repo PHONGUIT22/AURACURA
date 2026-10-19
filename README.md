@@ -164,28 +164,28 @@ sequenceDiagram
         else Quota Guard / Offline
             Cache-->>Agent: Instant 0-Quota Fallback Vault Metrics
         end
-        Agent->>Client: SSE Tick [diagnose] -> Redness: 82, Barrier: severely_damaged
+        Agent->>Client: SSE Tick [diagnose] : Redness 82, Barrier severely_damaged
     end
 
     rect rgb(20, 30, 25)
         note over Agent: Phase 2: [audit_safety]
         Agent->>Guardrail: Run formulation_safety_guardrail (Comedogenicity, Actives, Friction)
-        Guardrail-->>Agent: Veto direct acids & coarse fabrics; Require Mulberry Silk
-        Agent->>Client: SSE Tick [audit_safety] -> Passed 4-vector safety audit
+        Guardrail-->>Agent: Veto direct acids and coarse fabrics, Require Mulberry Silk
+        Agent->>Client: SSE Tick [audit_safety] : Passed 4-vector safety audit
     end
 
     rect rgb(30, 25, 20)
         note over Agent: Phase 3: [vto_simulation]
         Agent->>YouCam: Call youcam_vto_stylist (Gown: Sage Green, Silk)
         YouCam-->>Agent: Rendered VTO Image & Chromatic Harmony 96/100
-        Agent->>Client: SSE Tick [vto_simulation] -> Photorealistic try-on preview
+        Agent->>Client: SSE Tick [vto_simulation] : Photorealistic try-on preview
     end
 
     rect rgb(25, 20, 30)
         note over Agent: Phase 4: [synthesize_regimen]
         Agent->>Guardrail: Assemble 5-Step AM/PM Regimen + Cart Cap ($1,200)
         Guardrail-->>Agent: Grounded Clinical Dossier Assembled
-        Agent->>Client: SSE Event [done] -> Full AuraCuraDossier
+        Agent->>Client: SSE Event [done] : Full AuraCuraDossier
     end
 
     Client-->>User: Render Diagnostics Radar, VTO Slider, & Safety Audit Cards
